@@ -1,0 +1,31 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* home page */
+
+.h-75 {
+  height: 75%;
+}
+
+/* lobby page */
+
+.name-field {
+  border-top-style: hidden;
+  border-left-style: hidden;
+  border-right-style: hidden;
+  /* when input field is focused, outline is still gone.*/
+  outline: none;
+}
+
+table, th, tr, td {
+  border: 2px solid;
+}
+
+/* game page */
+
+.card {
+  max-width: 5em;
+  max-height: 5em;
+}
