@@ -29,3 +29,36 @@ table, th, tr, td {
   max-width: 5em;
   max-height: 5em;
 }
+
+/* sidebar */
+
+#sidebar {
+  position: absolute;
+  width: auto;
+  height: 100%;
+  left: -12.5em;
+  transition: .4s;
+}
+
+#sidebar ul li {
+  list-style: none;
+  color: #fff;
+  padding: 2em 0.1em 0 0;
+}
+
+#sidebar .toggle-btn {
+  position: absolute;
+  left: 13em;
+}
+
+.toggle-btn span {
+  width: 30px;
+  height: 3px;
+  background: #000;
+  display: block;
+  margin-top: 4px;
+}
+
+#sidebar.active {
+  left: 0;
+}
