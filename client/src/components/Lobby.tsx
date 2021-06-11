@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 //components
-import Title from './Title';
 import TeamTable from './TeamTable';
 // interfaces
 import ITable from '../interfaces/ITable';
@@ -24,7 +23,6 @@ const Lobby: FC = (): JSX.Element => {
   // const blueTeamProps: ITable = 
   return (
     <div className="container h-100">
-      <Title />
       <div className="d-flex justify-content-center flex-column mt-5">
         {/* name */}
         <div className="offset-2">
@@ -60,7 +58,7 @@ const Lobby: FC = (): JSX.Element => {
         {/* Start game */}
         <div className="m-4 d-flex justify-content-center ">
           <Link to="/game">
-          <button type="button" className="btn btn-outline-success">START GAME</button>
+            <button type="button" className="btn btn-outline-success">START GAME</button>
           </Link>
         </div>
       </div>

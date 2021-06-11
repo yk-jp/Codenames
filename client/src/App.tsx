@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './css/App.css';
 //components
 import Home from './components/Home';
+import Title from'./components/Title';
 import Lobby from './components/Lobby';
 import GameTable from './components/GameTable';
 
@@ -10,6 +11,7 @@ const App: FC = () => {
   return (
     <Router>
       <div className="App">
+        <Title />
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/lobby" component={Lobby} />

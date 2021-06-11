@@ -1,11 +1,10 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-//components
-import Title from './Title';
+
 const Home: FC = (): JSX.Element => {
   return (
     <div className="container h-100">
-      <Title />
+     
       <div className="d-flex justify-content-center flex-column align-items-center h-75">
 
         <div>
