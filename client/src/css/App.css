@@ -25,11 +25,6 @@ table, th, tr, td {
 
 /* game page */
 
-.card {
-  max-width: 5em;
-  max-height: 5em;
-}
-
 /* sidebar */
 
 #sidebar {
@@ -46,7 +41,13 @@ table, th, tr, td {
   padding: 2em 0.1em 0 0;
 }
 
-#sidebar .toggle-btn {
+#sidebar,.toggle-btn { 
+  /* defines the order of overlapping elements */
+  z-index:1;
+  background:white;
+} 
+
+.toggle-btn {
   position: absolute;
   left: 13em;
 }
@@ -62,3 +63,26 @@ table, th, tr, td {
 #sidebar.active {
   left: 0;
 }
+
+/* card */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  margin:0.15em;
+  width:100%;
+  height: 4em;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.word {
+  /* prevent form flowting out of a card */
+  width: 100%;
+  overflow:hidden; 
+  word-wrap: break-word;
+  font-size: 1em;
+}
+
+
