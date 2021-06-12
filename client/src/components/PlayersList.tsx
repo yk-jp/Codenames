@@ -8,5 +8,4 @@ const PlayersList: FC = (): JSX.Element => {
 
 }
 
-
 export default PlayersList;

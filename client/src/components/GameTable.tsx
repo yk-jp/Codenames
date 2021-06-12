@@ -1,11 +1,16 @@
 import { FC, useState, useEffect } from 'react';
 //components
 import TeamTable from './TeamTable';
+import CardList from './CardList';
+import Pulldown from './Pulldown';
 // interfaces
 import ITable from '../interfaces/ITable';
-
+import IWord from '../interfaces/IWord';
 // custom hook
 import sliceWordList from '../customHook/sliceWordList';
+// config
+import { WORD_URI } from '../config/config';
+
 
 const GameTable: FC = (): JSX.Element => {
   // table props
@@ -14,32 +19,44 @@ const GameTable: FC = (): JSX.Element => {
     style: "table text-primary border border-primary",
     team: "BLUE"
   };
-
   const redTeamProps: ITable["table"] = {
     id: "red",
     style: "table text-danger border border-danger",
     team: "RED"
   };
 
-  //useState
-  const [active, setActive] = useState<string>("");
-
   //sidebar 
   const show = (): void => {
-    active == "" ? setActive("active") : setActive("");
+    active === "" ? setActive("active") : setActive("");
   }
 
-  // test data
-  const wordList: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y"];
+  //useState
+  const [active, setActive] = useState<string>("");
+  // words
+  const [wordSet, setWordSet] = useState<IWord["words"][]>([]);
 
-  const [wordSets, setWordSet] = useState<string[][]>([]);
+  // fetch words
+  const wordList = async () => {
+    await fetch(WORD_URI)
+      .then(res => {
+        if (!res.ok) throw Error("Could not fetch data");
+        return res.json();
+      }
+      )
+      .then(data => {
+        storeWordData(data);
+      })
+      .catch(err => console.log(err.message))
+  }
+
+  const storeWordData = async (data: IWord["words"]) => {
+    const convertedData: IWord["words"][] = await sliceWordList(data);
+    setWordSet(convertedData);
+  };
 
   useEffect(() => {
-    //fetch wordList
-
-    //slice list into small sized list for cards elements
-    const convertedList = sliceWordList(wordList);
-    setWordSet(convertedList);
+    //fetch wordList and arrange data into 5 × 5 list to render 
+    wordList();
   }, []);
 
   return (
@@ -66,106 +83,21 @@ const GameTable: FC = (): JSX.Element => {
               <h5 className="text-center"><span className="text-danger">RED's TURN</span></h5>
               <h5 className="text-left"><span className="text-primary">2</span>-<span className="text-danger">4</span></h5>
             </div>
-          </div>
+            {/* 25 cards */}
+            {wordSet.map((words, key) => {
+              return <CardList words={words} key={key} />
+            })}
 
-          <div className="d-flex justify-content-center">
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto word">efeefeeeeeeeeeeeeeeewwwwwwwww</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto ">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
+            {/* give a clue button */}
+            <div className="d-flex justify-content-center">
+              <input type="text" placeholder="ENTER A WORD" />
+              <Pulldown />
+              <button type="button" className="btn btn-outline-success">GIVE A CLUE</button>
             </div>
           </div>
-
-          <div className="d-flex justify-content-center">
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto word">efeefeeeeeeeeeeeeeeewwwwwwwww</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto ">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-          </div>
-
-
-          <div className="d-flex justify-content-center">
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto word">efeefeeeeeeeeeeeeeeewwwwwwwww</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto ">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-
-          </div>
-
-          <div className="d-flex justify-content-center">
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto word">efeefeeeeeeeeeeeeeeewwwwwwwww</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto ">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-          </div>
-          <div className="d-flex justify-content-center">
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto word">efeefeeeeeeeeeeeeeeewwwwwwwww</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto ">efe</h6>
-            </div>
-            <div className="card col">
-              <h6 className="m-auto">efe</h6>
-            </div>
-
-          </div>
-
         </div>
       </div>
-
-
     </div >
-
   );
 }
 

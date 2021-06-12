@@ -19,7 +19,6 @@ const Lobby: FC = (): JSX.Element => {
     team: "RED"
   };
 
-
   // const blueTeamProps: ITable = 
   return (
     <div className="container h-100">
@@ -63,7 +62,6 @@ const Lobby: FC = (): JSX.Element => {
         </div>
       </div>
     </div >
-
   );
 }
 
