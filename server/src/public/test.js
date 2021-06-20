@@ -32,7 +32,6 @@ roomBtn.addEventListener("click", () => {
   socket.emit("join-room", roomInput.value);
 });
 
-
 const displayMessage = (msg) => {
   message.innerHTML += `<p>${msg}</p>`;
 }

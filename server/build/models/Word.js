@@ -1,5 +1,5 @@
 "use strict";
-// import { Sequelize, DataTypes } from "sequelize/types"
-// export deafult Sequelize.define('Words', {
-// }
-// )
+Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("sequelize/types");
+deafult;
+types_1.Sequelize.define('Words', {});
