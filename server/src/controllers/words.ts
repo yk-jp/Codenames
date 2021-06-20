@@ -11,7 +11,6 @@ const getWords = async () => {
   await En_words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true }).then((data) => {
     console.log(data);
   })
-
   .catch(err => {
     console.log(err.message);
   });
