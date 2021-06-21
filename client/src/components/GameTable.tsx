@@ -7,9 +7,9 @@ import Pulldown from './Pulldown';
 import ITable from '../interfaces/ITable';
 import IWord from '../interfaces/IWord';
 // custom hook
-import sliceWordList from '../customHook/sliceWordList';
+import sliceWordList from '../hooks/sliceWordList';
 // config
-import { WORD_URI } from '../config/config';
+import config from '../config/config';
 
 
 const GameTable: FC = (): JSX.Element => {
@@ -37,7 +37,7 @@ const GameTable: FC = (): JSX.Element => {
 
   // fetch words
   const wordList = async () => {
-    await fetch(WORD_URI)
+    await fetch(config.word_URI)
       .then(res => {
         if (!res.ok) throw Error("Could not fetch data");
         return res.json();

@@ -1,9 +1,11 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 //components
 import TeamTable from './TeamTable';
 // interfaces
 import ITable from '../interfaces/ITable';
+
+import queryString from 'querystring';
 
 const Lobby: FC = (): JSX.Element => {
   // table props
@@ -18,6 +20,13 @@ const Lobby: FC = (): JSX.Element => {
     style: "table text-danger border border-danger",
     team: "RED"
   };
+
+  const [room, setRoom] = useState<string | string[]>("");
+
+  useEffect(() => {
+    const room: queryString.ParsedUrlQuery = queryString.parse(window.location.search);
+    setRoom(room["?room"]);
+  });
 
   // const blueTeamProps: ITable = 
   return (
