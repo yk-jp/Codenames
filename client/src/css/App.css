@@ -3,6 +3,12 @@
   height: 100vh;
 }
 
+/* title */
+
+.title { 
+  color:black;
+}
+
 /* home page */
 
 .h-75 {
@@ -19,10 +25,17 @@
   outline: none;
 }
 
+input[name="link"] { 
+  width:93%;
+}
+
 table, th, tr, td {
   border: 2px solid;
 }
 
+hr { 
+  border-top: 2px solid black;
+}
 /* game page */
 
 /* sidebar */

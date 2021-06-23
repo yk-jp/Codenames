@@ -1,4 +1,4 @@
-const handleEvent = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, inputData: string): void => {
+const handleEvent = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, inputData: string): void => {
   if (!inputData) e.preventDefault();
 }
 

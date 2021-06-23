@@ -15,8 +15,8 @@ const App: FC = () => {
         <Title />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route exact path="/lobby" component={Lobby} />
-          <Route exact path="/game" component={GameTable} />
+          <Route path="/lobby/" component={Lobby}　/>
+          <Route path="/game/" component={GameTable} />
         </Switch>
       </div>
     </Router>
