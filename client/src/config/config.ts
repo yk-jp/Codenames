@@ -5,11 +5,13 @@ dotenv.config();
 const WORD_URI: string = "http://localhost:8000/words";
 
 
-// endpoint
-const server_endpoint: string = "http://localhost:3001";
+// socket.io
+const server_home: string = "http://localhost:3001";
+const server_lobby: string = "http://localhost:3001/lobby";
 
 const config = {
-  endpoint: server_endpoint,
+  home: server_home,
+  lobby: server_lobby,
   word_URI: WORD_URI
 }
 

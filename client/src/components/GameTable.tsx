@@ -4,27 +4,15 @@ import TeamTable from './TeamTable';
 import CardList from './CardList';
 import Pulldown from './Pulldown';
 // interfaces
-import ITable from '../interfaces/ITable';
 import IWord from '../interfaces/IWord';
 // custom hook
 import sliceWordList from '../hooks/sliceWordList';
 // config
 import config from '../config/config';
-
+// others
+import { blueTeamStyle, redTeamStyle } from '../css/teamTableStyle';
 
 const GameTable: FC = (): JSX.Element => {
-  // table props
-  const blueTeamProps: ITable["table"] = {
-    id: "blue",
-    style: "table text-primary border border-primary",
-    team: "BLUE"
-  };
-  const redTeamProps: ITable["table"] = {
-    id: "red",
-    style: "table text-danger border border-danger",
-    team: "RED"
-  };
-
   //sidebar 
   const show = (): void => {
     active === "" ? setActive("active") : setActive("");
@@ -71,8 +59,8 @@ const GameTable: FC = (): JSX.Element => {
               <span></span>
             </div>
             <ul className="d-flex justify-content-center">
-              <li><TeamTable table={blueTeamProps} /></li>
-              <li><TeamTable table={redTeamProps} /></li>
+              <li><TeamTable table={blueTeamStyle} /></li>
+              <li><TeamTable table={redTeamStyle} /></li>
             </ul>
           </div>
         </div>

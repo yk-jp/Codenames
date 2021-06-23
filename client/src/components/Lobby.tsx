@@ -2,33 +2,31 @@ import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 //components
 import TeamTable from './TeamTable';
-// interfaces
-import ITable from '../interfaces/ITable';
+//socket.io
+import { io } from "socket.io-client";
+//hooks
+import handleEvent from '../hooks/handleEvent';
+import getQueryParams from '../hooks/getQueryParams';
+import copyInputData from '../hooks/copyInputData';
+// others
+import config from '../config/config';
+import { blueTeamStyle, redTeamStyle } from '../css/teamTableStyle';
 
-import queryString from 'querystring';
 
-const Lobby: FC = (): JSX.Element => {
-  // table props
-  const blueTeamProps: ITable["table"] = {
-    id: "blue",
-    style: "table text-primary border border-primary",
-    team: "BLUE"
-  };
-
-  const redTeamProps: ITable["table"] = {
-    id: "red",
-    style: "table text-danger border border-danger",
-    team: "RED"
-  };
-
-  const [room, setRoom] = useState<string | string[]>("");
+const Lobby: FC<string> = (): JSX.Element => {
+  const link: string = window.location.toString();
+  const [playerName, setPlayerName] = useState<string>("");
 
   useEffect(() => {
-    const room: queryString.ParsedUrlQuery = queryString.parse(window.location.search);
-    setRoom(room["?room"]);
-  });
+    const lobby = io(config.lobby);
+    const roomId: string = getQueryParams();
+    lobby.emit("create-room", roomId);
+    lobby.on("joined-in", (id: number) => {
+      console.log("new player joined in ", id);
+    })
 
-  // const blueTeamProps: ITable = 
+  }, []);
+
   return (
     <div className="container h-100">
       <div className="d-flex justify-content-center flex-column mt-5">
@@ -37,15 +35,16 @@ const Lobby: FC = (): JSX.Element => {
           <h5>NAME</h5>
         </div>
         <div className="offset-2 col-8">
-          <input type="text" className="name-field w-100" name="name" />
+          <input id="playerName" type="text" className="name-field w-100" name="name" value={playerName} onChange={(e) => setPlayerName(e.target.value)} />
         </div>
 
         {/* invite code */}
         <div className="offset-2 mt-4">
-          <h5>INVITE FRIENDS</h5>
+          <h5>SEND THE CODE TO FRIENDS</h5>
         </div>
-        <div className="offset-2 col-8">
-          <input type="text" className="name-field w-100" name="inviteCode" />
+        <div className="offset-2 col-8 d-flex">
+          <input id={link} type="text" className="name-field" name="link" value={link} readOnly />
+          <button type="button" className="btn btn-outline-success" onClick={() => copyInputData(link)}>Copy</button>
         </div>
 
         {/* teams */}
@@ -53,8 +52,8 @@ const Lobby: FC = (): JSX.Element => {
           <h5 className="text-center">TEAMS</h5>
         </div>
         <div id="teams" className="offset-2 row col-8">
-          <TeamTable table={blueTeamProps} />
-          <TeamTable table={redTeamProps} />
+          <TeamTable table={blueTeamStyle} />
+          <TeamTable table={redTeamStyle} />
         </div>
 
         {/* NOTE */}
@@ -66,7 +65,7 @@ const Lobby: FC = (): JSX.Element => {
         {/* Start game */}
         <div className="m-4 d-flex justify-content-center ">
           <Link to="/game">
-            <button type="button" className="btn btn-outline-success">START GAME</button>
+            <button type="submit" className="btn btn-outline-success" onClick={(e) => handleEvent(e, playerName)}>START GAME</button>
           </Link>
         </div>
       </div>
