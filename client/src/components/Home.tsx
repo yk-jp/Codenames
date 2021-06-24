@@ -24,7 +24,7 @@ const Home: FC = (): JSX.Element => {
       <div className="d-flex justify-content-center flex-column align-items-center h-75">`
 
         <div>
-          <Link to={`/lobby/${roomId}`}>
+          <Link to={`/room/${roomId}`}>
             <button type="button" className="btn btn-outline-success">CREATE ROOM</button>
           </Link>
         </div>

@@ -4,8 +4,8 @@ import './css/App.css';
 //components
 import Home from './components/Home';
 import Title from './components/Title';
-import Lobby from './components/Lobby';
 import GameTable from './components/GameTable';
+import Room from './components/Room';
 
 const App: FC = () => {
 
@@ -15,7 +15,7 @@ const App: FC = () => {
         <Title />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/lobby/" component={Lobby}　/>
+          <Route path="/room/" component={Room}　/>
           <Route path="/game/" component={GameTable} />
         </Switch>
       </div>
