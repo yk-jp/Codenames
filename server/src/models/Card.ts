@@ -4,6 +4,7 @@ import En_wordsInstance from '../interfaces/En_words';
 export default class Card {
   private team: string; // assasin or blue or red or bystander
   private word: En_wordsInstance;
+
   constructor(team: string, word: En_wordsInstance) {
     this.team = team;
     this.word = word;

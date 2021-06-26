@@ -20,6 +20,7 @@ export default class Player {
     return this.team;
   }
 
+  //to change team if necessary.
   public setTeam(team: string): void {
     this.team = team;
   }
