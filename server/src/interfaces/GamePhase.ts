@@ -1,3 +1,2 @@
-export default interface GamePhase {
-  [key: string]: string
-}
+import Phase from "./Phase";
+export default interface GamePhase extends Phase { }
