@@ -3,7 +3,8 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import db from './config/db';
 import config from './config/config';
-import { v4 as uuidv4 } from 'uuid';
+// models
+import Table from "./models/Table";
 
 const app = express();
 const port = config.server.port || "3001";
@@ -11,7 +12,7 @@ const host = config.server.host || "localhost";
 
 //socket.io
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "http://localhost:3000", methods: ["GET"] } });
+const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
 //test db connection
 db.authenticate()
@@ -21,20 +22,39 @@ db.authenticate()
 
 //home page
 io.on('connection', (socket) => {
-  console.log("connected", socket.id);
+  console.log("connected", "new user is connected");
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
 
-//lobby
-io.of("/lobby").on("connection", (socket) => {
-  console.log("connected in Lobby Page");
+//game
+io.of("/game").on("connection", (socket) => {
+  console.log("connected in game page");
+  console.log(socket);
 
-  socket.on("create-room", (id:string) => {
-    socket.join(id);
-    socket.to(id).emit("joined-in", id);
+  // create table
+  // const table =  new Table();
+
+
+
+  // socket.on("create-room", (id: string | null) => {
+  //   if (!id) return;
+  //   socket.join(id);
+  //   socket.to(id).emit("enter-room", id);
+  // });
+
+  socket.on("join-room", (id: string) => {
+    if (true) socket.join(id);
+    else console.log("no room");
+    console.log("player entered");
+
+
+  });
+
+  socket.on("start-game", () => {
+
   });
 });
 
