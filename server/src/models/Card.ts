@@ -1,4 +1,4 @@
-import En_wordsInstance from '../interfaces/En_words';
+import En_wordsInstance from '../interfaces/schema/En_words';
 // besides the word from the database, it's needed to add a variable for team to detect which team it belongs to.
 
 export default class Card {

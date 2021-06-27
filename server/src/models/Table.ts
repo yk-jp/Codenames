@@ -1,5 +1,6 @@
 // class
 import Team from './Team';
+import Card from './Card';
 //interface
 import GamePhase from '../interfaces/GamePhase';
 import Clue from '../interfaces/Clue';
@@ -31,13 +32,13 @@ export default class Table {
   private phase: string;
   public redTeam: Team;
   public blueTeam: Team;
-  public cardCache: boolean[];
+  public cards: Card[];
 
   constructor(redTeam: Team, blueTeam: Team) {
     this.redTeam = redTeam;
     this.blueTeam = blueTeam;
     this.phase = "RED's TURN";
-    this.cardCache = []; // manage cards that are clicked.
+    this.cards = []; 
   }
 
   public haveTurn(inputData: Clue) {
