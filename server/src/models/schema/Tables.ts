@@ -13,7 +13,7 @@ const Tables = db.define<TablesInstance>('Tables', {
     }
   },
   table: {
-    type: DataTypes.JSON,//JSON object
+    type: DataTypes.JSON,
     unique: true,
     validate: {
       notEmpty: true

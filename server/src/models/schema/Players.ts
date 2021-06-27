@@ -18,6 +18,13 @@ const Players = db.define<PlayersInstance>('Players', {
       notEmpty: true
     }
   },
+  roomId: {
+    type: DataTypes.STRING,
+    unique: true,
+    validate: {
+      notEmpty: true
+    }
+  },
 },
   {
     tableName: 'players',

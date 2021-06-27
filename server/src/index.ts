@@ -9,10 +9,10 @@ import Operative from "./models/Operative";
 // db
 import db from './config/db';
 import { testDBConnection } from "./test/db_connection";
-import { syncModels } from "./controllers/SyncModelsController";
-import { player_find, player_insert, player_delete } from "./controllers/PlayerController";
-import { table_find, table_insert, table_delete } from "./controllers/TableController";
-import { Words_get } from "./controllers/wordsController";
+import { syncModels } from "./controllers/queries/SyncModelsQuery";
+import { player_find, player_findAll, player_insert, player_delete } from "./controllers/queries/PlayerQuery";
+import { table_find, table_insert, table_delete } from "./controllers/queries/TableQuery";
+import { Words_get } from "./controllers/queries/wordsQuery";
 
 const app = express();
 const port = config.server.port || "3001";
@@ -29,27 +29,32 @@ const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
 //home page
 io.on('connection', (socket) => {
-  console.log("connected", "new user is connected");
+  console.log("connected", "new player is connected");
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    console.log('player disconnected');
   });
 });
 
 //game
 io.of("/game").on("connection", (socket) => {
   console.log("connected in game page");
-  const table = new Table(new Team("RED"), new Team("BLUE"));
+
   socket.on("join-room", (id: string) => {
     socket.join(id);
   });
 
-  // as a first player got in the room, the table has to be created only once and shared in the room. 
-  socket.once("create-table", (roomId: string) => {
-
-    io.of("/game").in(roomId).emit("create-table", () => {
-      return new Table(new Team("RED"), new Team("BLUE"));
-    });
+  socket.on("create-table", (roomId: string) => {
+    let table = null;
+    table_find(roomId).then(data => { table = data });
+    if (table == null) {
+      // if table doesn't exist in the room, create a new table.
+      const newTable: Table = new Table(new Team("RED"), new Team("BLUE"));
+      // register table in DB
+      table_insert(roomId, newTable);
+      // send a table to frontend
+      io.of("/game").in(roomId).emit("create-table", JSON.stringify(newTable));
+    }
   });
 
   socket.on("card-clicked", (roomId: string) => {
@@ -58,13 +63,19 @@ io.of("/game").on("connection", (socket) => {
 
   // If players set their name, add players to table class 
   socket.on("add-player", (name: string, team: string, roomId: string) => {
-    table.redTeam.addPlayer(new Operative(name, socket.id, team));
-    console.log(table);
     socket.broadcast.to(roomId).emit("test");
   })
 
   socket.on("start-game", () => {
 
+  });
+
+  socket.on('disconnect', () => {
+    // if player disconnected, check if some players still join in the room.
+    let player = null;
+
+
+    console.log('player disconnected');
   });
 });
 
