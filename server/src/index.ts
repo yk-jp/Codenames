@@ -68,7 +68,6 @@ io.of("/game").on("connection", (socket) => {
   });
 });
 
-
 server.listen(port, () => {
   console.log(`Server listening at http://${host}:${port}`);
 });
