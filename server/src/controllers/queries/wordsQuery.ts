@@ -1,5 +1,5 @@
 //get 25 words randomly from the database.
-import En_words from '../models/schema/Words';
+import En_words from '../../models/schema/Words';
 import { Sequelize, DataTypes, Model } from "sequelize";
 
 /*

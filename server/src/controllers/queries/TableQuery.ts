@@ -1,21 +1,21 @@
-import Tables from "../models/schema/Tables";
+import Tables from "../../models/schema/Tables";
+import Table from '../../models/Table';
 
 export const table_find = async (id: string) => {
-  await Tables.findOne({ where: { id: id } })
-    .then(data => {
-      console.log(data);
-      console.log("table found. roomId = ", data!.id);
-    })
-    .catch(err => {
-      console.log("table not found", err.message)
-    });
+  return await Tables.findOne({ where: { id: id } })
+  .then(data => {
+    console.log("table found. roomId = ", data);
+  })
+  .catch(err => {
+    console.log("table not found    ", err.message);
+  });
 }
 
 // when the room is created
-export const table_insert = async (id: string, table: string) => {
+export const table_insert = async (id: string, table: Table) => {
   await Tables.create({ id: id, table: table })
     .then(() => {
-      console.log(`registered new table, roomId = `, id);
+      console.log("registered new table");
     })
     .catch((err) => {
       console.log(err.message);
