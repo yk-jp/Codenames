@@ -1,28 +1,28 @@
 import db from '../../config/db';
-import En_wordsInstance from '../../interfaces/schema/En_words';
+import TablesInstance from '../../interfaces/schema/Tables';
 import { Sequelize, DataTypes } from "sequelize";
 
-const En_words = db.define<En_wordsInstance>('En_words', {
+//id:roomId
+const Tables = db.define<TablesInstance>('Tables', {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
     unique: true,
     validate: {
       notEmpty: true
     }
   },
-  word: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  table: {
+    type: DataTypes.JSON,//JSON object
+    unique: true,
     validate: {
       notEmpty: true
     }
-  },
+  }
 },
   {
-    tableName: 'en_words',
+    tableName: 'tables',
     timestamps: false // avoid adding createdAt,updatedAt columns automatically
   });
 
-export default En_words;
+export default Tables;
