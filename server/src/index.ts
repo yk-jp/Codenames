@@ -10,9 +10,12 @@ import Operative from "./models/Operative";
 import db from './config/db';
 import { testDBConnection } from "./test/db_connection";
 import { syncModels } from "./controllers/queries/SyncModelsQuery";
-import { player_find, player_findAll, player_insert, player_delete } from "./controllers/queries/PlayerQuery";
-import { table_find, table_insert, table_delete } from "./controllers/queries/TableQuery";
+import { player_find, player_findAll, player_insert, player_delete } from "./controllers/queries/PlayersQuery";
+import { table_find, table_insert, table_delete } from "./controllers/queries/TablesQuery";
 import { Words_get } from "./controllers/queries/wordsQuery";
+import { roomId_find, roomId_insert, roomId_delete } from "./controllers/queries/RoomIdsQuery";
+import Tables from "./models/schema/Tables";
+
 
 const app = express();
 const port = config.server.port || "3001";
@@ -51,7 +54,7 @@ io.of("/game").on("connection", (socket) => {
       // if table doesn't exist in the room, create a new table.
       const newTable: Table = new Table(new Team("RED"), new Team("BLUE"));
       // register table in DB
-      table_insert(roomId, newTable);
+      table_insert(roomId, JSON.stringify(newTable));
       // send a table to frontend
       io.of("/game").in(roomId).emit("create-table", JSON.stringify(newTable));
     }

@@ -2,8 +2,8 @@ import { Model } from "sequelize";
 import Table from '../../models/Table';
 
 interface TablesAttributes {
-  id: string, //roomId
-  table: Table; //JSON    JSON type doesn't work
+  roomId: string, //roomId
+  table: string; //convert it into string for a database
 }
 
 export default interface TablesInstance extends Model<TablesAttributes>,
