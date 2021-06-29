@@ -19,7 +19,8 @@ const Players = db.define<PlayersInstance>('Players', {
     }
   },
   roomId: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUIDV4,
+    allowNull: false,
     unique: true,
     validate: {
       notEmpty: true

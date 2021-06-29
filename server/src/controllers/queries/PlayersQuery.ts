@@ -24,7 +24,7 @@ export const player_findAll = async (roomId: string) => {
 export const player_insert = async (id: string, name: string, roomId: string) => {
   await Player.create({ id: id, name: name, roomId: roomId })
     .then(() => {
-      console.log(`registered new Player`);
+      console.log(`stored new Player`);
     })
     .catch((err) => {
       console.log(err.message);
