@@ -21,8 +21,8 @@ export const player_findAll = async (roomId: string) => {
 }
 
 // when player connected the room
-export const player_insert = async (id: string, name: string, roomId: string) => {
-  await Player.create({ id: id, name: name, roomId: roomId })
+export const player_insert = async (id: string, roomId: string, player: string) => {
+  await Player.create({ id: id, roomId: roomId, player: player })
     .then(() => {
       console.log(`stored new Player`);
     })

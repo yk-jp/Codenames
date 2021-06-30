@@ -9,7 +9,7 @@ import Operative from "./models/Operative";
 // db
 import db from './config/db';
 import { testDBConnection } from "./test/db_connection";
-import { syncModels } from "./controllers/queries/SyncModelsQuery";
+import { db_synchronization } from "./config/db_synchronization";
 import { player_find, player_findAll, player_insert, player_delete } from "./controllers/queries/PlayersQuery";
 import { table_find, table_insert, table_delete } from "./controllers/queries/TablesQuery";
 import { Words_get } from "./controllers/queries/wordsQuery";
@@ -22,7 +22,7 @@ const port = config.server.port || "3001";
 const host = config.server.host || "localhost";
 
 //Synchronizing database 
-syncModels();
+db_synchronization();
 //test db connection
 testDBConnection();
 
@@ -43,22 +43,50 @@ io.on('connection', (socket) => {
 io.of("/game").on("connection", (socket) => {
   console.log("connected in game page");
 
-  socket.on("join-room", (id: string) => {
-    socket.join(id);
+  socket.on("store-roomId", (roomId: string) => {
+    let id = null;
+    roomId_find(roomId).then(data => { id = data });
+    if (id == null) roomId_insert(roomId);
+  });
+
+  socket.on("join-room", (roomId: string) => {
+    socket.join(roomId);
   });
 
   socket.on("create-table", (roomId: string) => {
     let table = null;
     table_find(roomId).then(data => { table = data });
     if (table == null) {
+      console.log(table);
       // if table doesn't exist in the room, create a new table.
       const newTable: Table = new Table(new Team("RED"), new Team("BLUE"));
       // register table in DB
       table_insert(roomId, JSON.stringify(newTable));
       // send a table to frontend
-      io.of("/game").in(roomId).emit("create-table", JSON.stringify(newTable));
+      io.of("/game").in(roomId).emit("receive-table", JSON.stringify(newTable));
     }
   });
+
+  socket.on("create-player", (playerName: string, roomId) => {
+    let table: Table = Object(null) as Table;
+    table_find(roomId).then(data => {
+      table = Object.assign(new Table(new Team("RED"), new Team("BLUE")), data);
+    });
+
+    const player = new Operative(playerName, socket.id, "no team");
+    // get player in the table class
+    table.addPlayer(player);
+
+    // get player in the team
+    table.addPlayerToTeam(player);
+
+    // store player in db
+    player_insert(socket.id, roomId, JSON.stringify(player));
+    // send json data to the client
+    socket.emit("set-player", JSON.stringify(player));
+  });
+
+
 
   socket.on("card-clicked", (roomId: string) => {
     io.of("/game").in(roomId).emit("card-clicked");
