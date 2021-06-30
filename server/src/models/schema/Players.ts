@@ -4,28 +4,29 @@ import { Sequelize, DataTypes } from "sequelize";
 
 const Players = db.define<PlayersInstance>('Players', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    unique: true,
-    validate: {
-      notEmpty: true
-    }
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    allowNull:false,
     validate: {
       notEmpty: true
     }
   },
   roomId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     allowNull: false,
-    unique: true,
     validate: {
       notEmpty: true
     }
   },
+  player: {
+    type: DataTypes.TEXT,
+    allowNull:false,
+    validate: {
+      notEmpty: true
+    }
+  }
 },
   {
     tableName: 'players',

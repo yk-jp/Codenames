@@ -9,12 +9,14 @@ const Tables = db.define<TablesInstance>('Tables', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     unique: true,
+    allowNull:false,
     validate: {
       notEmpty: true
     }
   },
   table: {
     type: DataTypes.TEXT,
+    allowNull:false,
     validate: {
       notEmpty: true
     }

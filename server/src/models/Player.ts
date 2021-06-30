@@ -8,6 +8,12 @@ export default class Player {
     this.team = team;
   }
 
+  public getPlayerInfo() {
+    return {
+      name: this.getName(), id: this.getId(), team: this.getTeam()
+    };
+  }
+
   public getName(): string {
     return this.name;
   }

@@ -15,27 +15,18 @@ export default class Team {
     "WAITING FOR TURN": "GIVING A CLUE"
   };
   private phase: string;
+  private teamMembers: Player[];
   private spymaster: Spymaster;
   private operatives: Operative[];
-  private players: Player[]; //all team members
 
   constructor(name: string) {
     this.name = name;
     this.spymaster = Object(null); // Before game starts, somebody become a spymaster.
     this.operatives = []; //every players are operatives at first
-    this.players = []; //no players unless somebody log in to Lobby
     this.phase = this.name === "RED" ? "GIVING A CLUE" : "WAITING FOR TURN";
+    this.teamMembers = [];
     Team.GUESSCOUNT = -1;
     Team.CARDSREMAINING = this.name == "RED" ? 8 : 7; //red:8, blue:7
-  }
-
-  /*
-    Each time users log in, add user to players
-    NOTE: If 5 members are in the team, more players can't join.  
-  */
-  public addPlayer(newPlayer: Player): void {
-    if (this.isMaximumLimitOfPlayers()) return;
-    this.players.push(newPlayer);
   }
 
   // spymaster or operatives
@@ -50,16 +41,6 @@ export default class Team {
   */
   public isTurnEnd(): boolean {
     return Team.GUESSCOUNT < 0;
-  }
-
-  // the number of players has to be more than two.
-  public isMoreTwoPlayers(): boolean {
-    return this.players.length == 2;
-  }
-
-  // check if 5 members are in the team. 5 members are maximum limit
-  public isMaximumLimitOfPlayers(): boolean {
-    return this.players.length == 5;
   }
 
   public getguessCount(): number {
@@ -97,16 +78,42 @@ export default class Team {
     Team.GUESSCOUNT = count + 1;
   }
 
-  public getPlayers(): Player[] {
-    return this.players;
+  public getTeamMembers(): Player[] {
+    return this.teamMembers;
+  }
+
+  public setTeamMembers(player: Player): void {
+    this.teamMembers.push(player);
+  }
+
+  public setOperative(player: Player): void {
+    this.operatives.push(player);
   }
 
   public getSpymaster(): Spymaster {
     return this.spymaster;
   }
 
-  public setSpymaster(spymaster: Spymaster) {
+  // if another player already have a role of spymaster, replace the role to an operative. 
+  public setSpymaster(spymaster: Spymaster): void {
+    if (this.spymaster) this.spymaster = spymaster; //spymaster == null
+    // The new spymaster's data must be still stored in operatives.
+    //swap data with the new Operative. 
+    const operativeAt: number = this.operativeAt(spymaster.getId());
+    const playerInfo = spymaster.getPlayerInfo();
+    const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.team);
+
     this.spymaster = spymaster;
+    this.operatives[operativeAt] = newOperative;
+  }
+
+  public operativeAt(id: string): number {
+    let operativeAt: number = -1;
+    this.operatives.map((operative, index) => {
+      if (operative.getId() == id) operativeAt = index;
+    });
+
+    return operativeAt;
   }
 
 }

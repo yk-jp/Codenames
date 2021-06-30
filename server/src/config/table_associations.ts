@@ -10,3 +10,6 @@ import Players from "../models/schema/Players";
 Tables.belongsTo(RoomIds, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade' });
 RoomIds.hasOne(Tables);
 
+Tables.belongsTo(Players, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade' });
+Players.hasOne(Tables);
+
