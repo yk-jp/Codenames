@@ -18,6 +18,10 @@ export default class Player {
     return this.name;
   }
 
+  public setName(playerName: string): void {
+    this.name = playerName;
+  }
+
   public getId(): string {
     return this.id;
   }

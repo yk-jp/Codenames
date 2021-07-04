@@ -37,10 +37,10 @@ export default class Table {
   public blueTeam: Team;
   public cards: Card[];
 
-  constructor(redTeam: Team, blueTeam: Team) {
+  constructor() {
     this.players = []; //no players unless somebody log in to Lobby
-    this.redTeam = redTeam;
-    this.blueTeam = blueTeam;
+    this.redTeam = new Team("RED");
+    this.blueTeam = new Team("BLUE");
     this.phase = "RED's TURN";
     this.cards = [];
   }
@@ -136,5 +136,10 @@ export default class Table {
   public setGamePhase(): void {
     this.phase = Table.PHASE[this.phase];
   }
+
+  public getPlayers(): Player[] {
+    return this.players;
+  }
+
 
 }
