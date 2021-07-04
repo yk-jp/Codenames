@@ -1,14 +1,8 @@
+import { table } from "console";
 import Tables from "../../models/schema/Tables";
-import Table from '../../models/Table';
 
 export const table_find = async (roomId: string) => {
   return await Tables.findOne({ where: { roomId: roomId } })
-    .then(data => {
-      console.log("table found. roomId = ", data);
-    })
-    .catch(err => {
-      console.log("table not found    ", err.message);
-    });
 }
 
 // when the room is created
@@ -17,8 +11,8 @@ export const table_insert = async (roomId: string, table: string) => {
     .then(() => {
       console.log("stored new table");
     })
-    .catch((err) => {
-      console.log(err.message);
+    .catch(() => {
+      console.log("could not store a new table");
     });
 }
 
@@ -31,8 +25,19 @@ export const table_delete = async (roomId: string) => {
   }).then(() => {
     console.log(`deleted table, roomId = `, roomId);
   })
-    .catch((err) => {
-      console.log(err.message);
+    .catch(() => {
+      console.log("could not delete a table");
+    });
+}
+
+export const table_update = async (roomId: string, table: string) => {
+  await Tables.update({ table: table }, {
+    where: { roomId: roomId }
+  }).then(() => {
+    console.log("updated table,  roomId = ", roomId);
+  })
+    .catch(() => {
+      console.log("could not update a table");
     });
 }
 

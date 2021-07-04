@@ -2,13 +2,7 @@ import RoomIds from "../../models/schema/RoomIds";
 
 
 export const roomId_find = async (roomId: string) => {
-  return await RoomIds.findOne({ where: { roomId: roomId } })
-    .then(data => {
-      console.log("roomId found. roomId = ", data);
-    })
-    .catch(err => {
-      console.log("roomId not found    ", err.message);
-    });
+  return await RoomIds.findOne({ where: { roomId: roomId } });
 }
 
 // when the room is created
@@ -17,8 +11,8 @@ export const roomId_insert = async (roomId: string) => {
     .then(() => {
       console.log("stored new roomId");
     })
-    .catch((err) => {
-      console.log(err.message);
+    .catch(() => {
+      console.log("could not store a new roomId");
     });
 }
 
@@ -31,7 +25,7 @@ export const roomId_delete = async (roomId: string) => {
   }).then(() => {
     console.log(`deleted roomId = `, roomId);
   })
-    .catch((err) => {
-      console.log(err.message);
+    .catch(() => {
+      console.log("could not delete the roomId");
     });
 }
