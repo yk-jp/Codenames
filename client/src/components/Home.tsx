@@ -2,29 +2,23 @@ import { FC, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 // socket.io
 import { io } from "socket.io-client";
-//hook
-import handleEvent from '../hooks/handleEvent';
 //others
 import config from '../config/config';
 import { v4 as uuidv4 } from 'uuid';
 
-
 const Home: FC = (): JSX.Element => {
-
-  const [roomId, setRoomId] = useState(""); //The id to get in the invited room.
-
+  const [roomId, setRoomId] = useState<string>();
+  
   useEffect(() => {
-    const home = io(config.home);
-    setRoomId(uuidv4());
+    setRoomId(uuidv4()); // generate a roomId
+    const home = io(config.server.home);
   }, []);
 
   return (
     <div className="container h-100">
-
-      <div className="d-flex justify-content-center flex-column align-items-center h-75">`
-
+      <div className="d-flex justify-content-center flex-column align-items-center h-75">
         <div>
-          <Link to={`/room/${roomId}`}>
+          <Link to={`/game?room=${roomId}`}>
             <button type="button" className="btn btn-outline-success">CREATE ROOM</button>
           </Link>
         </div>
