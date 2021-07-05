@@ -5,6 +5,10 @@
   height: 100vh;
 }
 
+.h-20px { 
+  height:20px;
+}
+
 .h-75 {
   height: 75%;
 }
@@ -18,17 +22,16 @@
 .title {
   color: black;
   text-align: center;
+  display:inline!important;
 }
 
-/************** room page *****************/
-
+/************** game page *****************/
+/* name form */
 .name {
   border: 2px solid #198754;
   width: 300px;
   height: 300px;
 }
-
-/************** game page *****************/
 
 /* table */
 
@@ -45,6 +48,17 @@ table, th, tr, td {
   width: 70px;
   height: 60px;
   opacity: 0.6;
+}
+
+/* copy button*/
+.btn-sm { 
+  padding: 0 0.5rem !important;
+  font-size: 0.5rem;
+  border-radius: 0.1rem;
+}
+
+.stopHover{ 
+  pointer-events: none;
 }
 
 .card:hover {
