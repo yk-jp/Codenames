@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from 'react';
 //components
-import NameForm from './NameForm';
 import GameTable from './GameTable';
 import Loading from './Loading';
 // interfaces
@@ -17,57 +16,55 @@ import queryString from 'query-string';
 import { Socket } from 'net';
 
 //socket.io
-let game = io(config.server.game);
+// let socket = io(config.server.home, {
+//   autoConnect: true,
+//   withCredentials: true,
+// });
+
+// let game = io(config.server.game, {
+//   autoConnect: true,
+//   withCredentials: true,
+// });
 
 const Game: FC = (): JSX.Element => {
   const [url, setUrl] = useState<string>(window.location.search);
   const [roomId, setRoomId] = useState<string>(queryString.parse(window.location.search).room as string);
   const [wordSet, setWordSet] = useState<IWord["words"][]>([]);
   const [table, setTable] = useState<any>(null);
-  const [playerName, setPlayerName] = useState<string | null>(null);
   const [player, setPlayer] = useState<IPlayer["player"] | null>(null);
   const [isplayerStored, setIsPlayerStored] = useState<boolean>(false);
+
+  const [playerNameAlreadySelected, setPlayerNameAlreadySelected] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // store a roomId
-    game.emit("store-roomId", roomId);
-    // join in a room
-    game.emit("join-room", roomId);
+    // game.on("session", ({ sessionID, playerID }) => {
+    //   sessionStorage.setItem("sessionID", sessionID);
+    //   game.connect();
+    // });
+
+    // const sessionID = localStorage.getItem("sessionID");
+    // if (sessionID) {
+    //   setPlayerNameAlreadySelected(true);
+    //   game.connect();
+    // }
+
+    // // //table
+    // game.emit("receive-table", roomId);
+    // game.on("receive-table", (table: string) => {
+    //   setTable(JSON.parse(table));
+    //   setIsLoading(false);
+    // });
+    // // player
+    // game.emit("receive-player");
+    // game.on("receive-player", (player: string | null) => {
+    //   if (player) {
+    //     setPlayer(JSON.parse(player));
+    //     console.log(player);
+    //   }
+    // });
   }, []);
-
-  useEffect(() => {
-    //table
-    game.emit("receive-table", roomId);
-    // player
-    game.emit("receive-player");
-  },[]);
-
-  useEffect(() => {
-    game.on("receive-player", (player: string | null) => {
-      if (player) {
-        console.log(player);
-        setIsPlayerStored(true);
-        setPlayer(JSON.parse(player));
-      }
-    });
-    game.on("receive-table", (table: string) => {
-      setTable(JSON.parse(table));
-      setIsLoading(false);
-    });
-  });
-
-
-
-  // useEffect(() => {
-  //   // game.emit("update-table", id, table);
-  // }, [table]);
-
-  // useEffect(() => {
-  //   game.emit("recieve-player");
-  // }, [player]);
-
 
   // fetch words
   // const wordList = async () => {
@@ -87,19 +84,9 @@ const Game: FC = (): JSX.Element => {
   //   const convertedData: IWord["words"][] = await sliceWordList(data);
   //   setWordSet(convertedData);
   // };
-  if (isLoading) return <Loading />
-  if (!isplayerStored) return (
-    <div>
-      {`${JSON.stringify(player)}  afe   ${JSON.stringify(table)}`};
-      <NameForm setPlayerName={setPlayerName} game={game} roomId={roomId} />
-    </div>
-  )
+  // if (isLoading) return <Loading />
   return (
-    <div>
-      {table && JSON.stringify(table)}
-      {JSON.stringify(player)}
-    </div >
-    // <div>pass</div>
+    <GameTable />
   );
 };
 
