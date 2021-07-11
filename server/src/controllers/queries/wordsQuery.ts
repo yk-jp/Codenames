@@ -7,11 +7,6 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 */
 
 export const Words_get = async () => {
-  await En_words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true }).then((data) => {
-    console.log(data);
-  })
-    .catch(err => {
-      console.log(err.message);
-    });
+  await En_words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true });
 }
 

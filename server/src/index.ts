@@ -1,7 +1,12 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import config from './config/config';
+import { v4 as uuidv4 } from 'uuid';
+import cors from 'cors';
+// session
+import session from 'express-session';
+import sessionStore from "./models/schema/Sessions";
 // models
 import Table from "./models/Table";
 import Team from "./models/Team";
@@ -12,10 +17,11 @@ import { testDBConnection } from "./test/db_connection";
 import { db_synchronization } from "./config/db_synchronization";
 import { player_find, player_findAll, player_insert, player_delete, player_update } from "./controllers/queries/PlayersQuery";
 import { table_find, table_insert, table_update, table_delete } from "./controllers/queries/TablesQuery";
+import { session_find, session_insert } from "./controllers/queries/SessionsQuery";
 import { Words_get } from "./controllers/queries/wordsQuery";
 import { roomId_find, roomId_insert, roomId_delete } from "./controllers/queries/RoomIdsQuery";
+import { EROFS } from "constants";
 
-import PlayersInstance from "./interfaces/schema/Players";
 
 const app = express();
 const port = config.server.port || "3001";
@@ -26,121 +32,182 @@ db_synchronization();
 //test db connection
 testDBConnection();
 
+// It's for the express router
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+const sessionMiddleware = session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 12
+  },
+});
+
+// register middleware in Express
+app.use(sessionMiddleware);
+
+//form page
+app.post('/form', (req: any, res) => {
+  console.log(req.session.isAuthenticated)
+  if (!req.session.isAuthenticated) {
+    //attach a player info to session 
+    req.session.playerName = req.body.playerName.toString() as string;
+    req.session.playerId = uuidv4();
+    req.session.isAuthenticated = true;
+    // save session
+    req.session.save();
+    res.end();
+    // if (req.session.roomId) res.redirect(`/game/:${req.session.roomId}`);
+    // else res.redirect(`/game/:${uuidv4()}`);  //if a player don't have a roomId, give a new roomId.
+  }
+  // error
+  res.status(400).end();
+});
+
+//game page
+app.get('/game/:roomId', (req: any, res) => {
+  const roomId = req.params.roomId;
+  if (!req.session.isAuthenticated) {
+    // set roomId to be able to go to the game page again.
+    req.session.roomId = roomId;
+    res.end();
+  }
+});
+
 //socket.io
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
-
-//home page
-io.on('connection', (socket) => {
-  console.log("connected", "new player is connected");
-  socket.on('disconnect', () => {
-    console.log('player disconnected');
-  });
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000"],
+    credentials: true
+  }
 });
 
-//game
-io.of("/game").on("connection", (socket) => {
-  console.log("connected in game page");
-  socket.on("store-roomId", (roomId: string) => {
-    roomId_insert(roomId);
-    let table: Table = new Table();
-    // register table in DB
-    table_insert(roomId, JSON.stringify(table));
-  });
+// //home page
+// io.on('connection', (socket) => {
+//   console.log("connected", "new player is connected");
+//   socket.on('disconnect', () => {
+//     console.log('player disconnected');
+//   });
+// });
 
-  socket.on("join-room", (roomId: string) => {
-    socket.join(roomId);
+// const gameIO = io.of("/game");
 
-  });
+// // execute middleware before connection 
+// gameIO.use((socket, next) => {
 
-  socket.on("create-table", (roomId: string) => {
-    // if table doesn't exist in the room, create a new table.
-    let table: Table = new Table();
-    // register table in DB
-    table_insert(roomId, JSON.stringify(table));
-  });
+// });
 
-  socket.on("recieve-table", (roomId: string) => {
-    let table: Table = new Table();
-    table_find(roomId)
-      .then(data => {
-        table = Object.assign(JSON.parse(data!.table), new Table());
-      }).catch(() => {
-        console.log("table was found")
-      });
-    // send a table to frontend
-    io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
-  })
+// //game
+// gameIO.on("connection", (socket: any) => {
+//   console.log("connected in game page");
 
-  socket.on("create-player", (roomId) => {
-    const player = new Operative("", socket.id, "no team");
-    // store player in db
-    player_insert(socket.id, roomId, JSON.stringify(player));
-  });
+//   socket.emit("session", {
+//     sessionID: socket.data.sessionID,
+//     playerID: socket.data.playerId,
+//   });
 
-  socket.on("update-playerName", (playerName: string) => {
-    let player: Operative = new Operative("", "", "");
-    player_find(socket.id)
-      .then(data => {
-        player = Object.assign(JSON.parse(data!.player), new Operative("", "", ""));
-      }).catch(() => {
-        console.log("could not find a player");
-      });
-    player.setName(playerName);
-    // store player in db
-    player_update(socket.id, JSON.stringify(player));
-    //send json data to the client
-    socket.emit("recieve-player", JSON.stringify(player));
-  });
+//   socket.on("login", (playerName: string) => {
+//     session_insert(socket.data.sessionID, socket.data.playerId);
+//   });
 
-  socket.on("add-player-to-table", (roomId: string) => {
-    let table: Table = new Table(); //null or table class
-    table_find(roomId)
-      .then(data => {
-        table = Object.assign(JSON.parse(data!.table), new Table());
-      }).catch(() => {
-        console.log("table was found")
-      });
-    player_find(socket.id)
-      .then(data => {
-        const player: Operative = Object.assign(JSON.parse(data!.player), new Operative("", "", ""));
-        // get player in the table class
-        table.addPlayer(player);
-        // get player in the team
-        table.addPlayerToTeam(player);
-        // update table in db
-        table_update(roomId, JSON.stringify(table));
-        // send a table to frontend
-        io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
-      }).catch(() => {
-        console.log("could not find a player");
-      });
-  })
+//   socket.on("store-roomId", (roomId: string) => {
+//     let isStored: boolean = false;
+//     roomId_find(roomId)
+//       .then(data => {
+//         isStored = true;
+//       }).catch(() => {
+//       });
+//     // if roomId doensn't exsit in the db, store a new roomId
+//     if (!isStored) roomId_insert(roomId);
+//     socket.emit("store-roomId", roomId);
+//   });
 
-  socket.on("recieve-player", () => {
-    player_find(socket.id)
-      .then(data => {
-        socket.emit("recieve-player", JSON.stringify(data!.player));
-      })
-      .catch(() => {
-        console.log("could not find a player");
-      });
-  })
+//   socket.on("join-room", (roomId: string) => {
+//     socket.join(roomId);
+//   });
 
-  socket.on("card-clicked", (roomId: string) => {
-    io.of("/game").in(roomId).emit("card-clicked");
-  })
+//   socket.on("receive-table", (roomId: string) => {
+//     let table: Table = new Table();
+//     let isStored: boolean = false;
+//     table_find(roomId)
+//       .then(data => {
+//         table = Object.assign(JSON.parse(data!.get("table")), new Table());
+//         isStored = true;
+//       }).catch(() => {
+//         console.log("table was not found");
+//       });
+//     // if table doesn't exist in a db, store a new table instance
+//     if (!isStored) {
+//       // fetch 25 words and add them to table
 
-  socket.on("start-game", () => {
+//       table_insert(roomId, JSON.stringify(table));
+//     }
+//     // send a table to frontend
+//     io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
+//   })
 
-  });
+//   socket.on("update-table", (roomId: string, table: string | null) => {
+//     if (table) table_update(roomId, table);
+//   })
 
-  socket.on('disconnect', () => {
-    socket.emit("delete-player", socket.id);
+//   socket.on("receive-player", () => {
+//     let player: Operative = new Operative("", "", "");
+//     let isStored: boolean = false;
+//     const playerId: string = socket.data.playerId;
+//     player_find(playerId)
+//       .then(data => {
+//         player = Object.assign(JSON.parse(data!.get("player")), new Operative("", "", ""));
+//         isStored = true;
+//       })
+//       .catch(() => {
+//         console.log("could not find a player");
+//       });
+//     if (isStored) socket.emit("receive-player", JSON.stringify(player));
+//     else socket.emit("receive-player", null);
+//   })
 
-    console.log('player disconnected');
-  });
-});
+//   socket.on("store-player", (playerName: string, roomId: string) => {
+//     const playerId: string = socket.data.playerId;
+//     let table: Table = new Table();
+//     let player: Operative = new Operative(playerName, playerId, "no team");
+//     table_find(roomId)
+//       .then(data => {
+//         table = Object.assign(JSON.parse(data!.get("table")), new Table());
+
+//       }).catch(() => {
+//         console.log("table was not found");
+//       });
+//     table.addPlayer(player);
+//     table.addPlayerToTeam(player);
+//     // table update
+//     table_update(roomId, JSON.stringify(table));
+//     //store player
+//     player_insert(playerId, roomId, JSON.stringify(player));
+
+//     io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
+//     socket.emit("receive-player", JSON.stringify(player));
+//   });
+
+//   socket.on("update-player", (player: string | null) => {
+//     if (player) player_update(player, socket.data.playerId);
+//   });
+
+//   socket.on('disconnect', () => {
+//     socket.emit("delete-player");
+
+//     console.log('player disconnected');
+//   });
+// });
 
 server.listen(port, () => {
   console.log(`Server listening at http://${host}:${port}`);

@@ -25,7 +25,7 @@ const DB = {
 
 const config = {
   server: SERVER,
-  db: DB
+  db: DB,
 }
 
 export default config;
