@@ -1,7 +1,7 @@
 import Player from '../../models/schema/Players';
 
 export const player_find = async (id: string) => {
-  return await Player.findOne({ where: { id: id } });
+  return await Player.findOne({ where: { id: id } })
 }
 
 export const player_findAll = async (roomId: string) => {

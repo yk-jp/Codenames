@@ -16,6 +16,7 @@ const Players = db.define<PlayersInstance>('Players', {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     allowNull: false,
+    unique:true,
     validate: {
       notEmpty: true
     }
