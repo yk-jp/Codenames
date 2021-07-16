@@ -3,8 +3,8 @@ import Clue from '../interfaces/Clue';
 export default class Spymaster extends Player {
   private clue: Clue;
 
-  constructor(name: string, id: string, team: string) {
-    super(name, id, team);
+  constructor(name: string, id: string, role: string, team: string) {
+    super(name, id, role, team);
     this.clue = { word: "", number: "" };
   }
 

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useContext, useRef } from 'react';
 //components
 import GameTable from './GameTable';
 import Loading from './Loading';
@@ -7,86 +7,85 @@ import IWord from '../interfaces/IWord';
 import IPlayer from '../interfaces/IPlayer';
 //socket.io
 import { io } from "socket.io-client";
+import { socketConnection } from '../controllers/socket/socket-connection-controller';
+import { socketPlayer } from '../controllers/socket/socket-player-controller';
+import { socketTable } from '../controllers/socket/socket-table-controller';
 // custom hook
 import sliceWordList from '../hooks/sliceWordList';
 // config
 import config from '../config/config';
 // others 
 import queryString from 'query-string';
-import { Socket } from 'net';
-
-//socket.io
-// let socket = io(config.server.home, {
-//   autoConnect: true,
-//   withCredentials: true,
-// });
-
-// let game = io(config.server.game, {
-//   autoConnect: true,
-//   withCredentials: true,
-// });
+import { LocationContext } from '../context/LocationHistoryContext';
 
 const Game: FC = (): JSX.Element => {
   const [url, setUrl] = useState<string>(window.location.search);
-  const [roomId, setRoomId] = useState<string>(queryString.parse(window.location.search).room as string);
   const [wordSet, setWordSet] = useState<IWord["words"][]>([]);
   const [table, setTable] = useState<any>(null);
   const [player, setPlayer] = useState<IPlayer["player"] | null>(null);
-  const [isplayerStored, setIsPlayerStored] = useState<boolean>(false);
-
-  const [playerNameAlreadySelected, setPlayerNameAlreadySelected] = useState<boolean>(false);
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const locationHistory = useContext(LocationContext);
+  //socket.io
+  const socket = useRef(io(config.server.game, {
+    autoConnect: false,
+    withCredentials: true,
+  }));
+  let roomId: string;
+  let playerName: string;
+  let playerId: string;
 
   useEffect(() => {
-    // game.on("session", ({ sessionID, playerID }) => {
-    //   sessionStorage.setItem("sessionID", sessionID);
-    //   game.connect();
-    // });
+    if (locationHistory!.history.location.state == undefined || !locationHistory!.history.location.state.loggedIn) {
+      locationHistory!.history.push('/form', { loggedIn: false, from: "gamePage", prev: locationHistory!.history.location.pathname });
+    }
+    setIsLoggedIn(true);
+    roomId = window.location.pathname.split("/").pop() as string;
+    playerName = sessionStorage.getItem("playerName") as string;
+    playerId = sessionStorage.getItem("playerId") as string;
 
-    // const sessionID = localStorage.getItem("sessionID");
-    // if (sessionID) {
-    //   setPlayerNameAlreadySelected(true);
-    //   game.connect();
-    // }
+    // If log in was successfully done, connect to the backend with socket  
+    socket.current.connect();
+    // roomId
+    socket.current.emit("store-roomId", roomId);
+    // join room
+    socket.current.emit("join-room", roomId);
+    // table
+    socket.current.on("receive-table", (table: string) => {
+      setTable(JSON.parse(table));
+    });
+    setIsLoading(false);
 
-    // // //table
-    // game.emit("receive-table", roomId);
-    // game.on("receive-table", (table: string) => {
-    //   setTable(JSON.parse(table));
-    //   setIsLoading(false);
-    // });
-    // // player
-    // game.emit("receive-player");
-    // game.on("receive-player", (player: string | null) => {
-    //   if (player) {
-    //     setPlayer(JSON.parse(player));
-    //     console.log(player);
-    //   }
-    // });
+    // player
+    socket.current.emit("store-player", playerName, playerId, roomId);
+    socket.current.on("receive-player", (player: string) => {
+      setPlayer(JSON.parse(player));
+      console.log(player);
+    });
+
+    return () => {
+      socket.current.off();
+    }
   }, []);
 
-  // fetch words
-  // const wordList = async () => {
-  //   await fetch(config.word_URI)
-  //     .then(res => {
-  //       if (!res.ok) throw Error("Could not fetch data");
-  //       return res.json();
-  //     }
-  //     )
-  //     .then(data => {
-  //       storeWordData(data);
-  //     })
-  //     .catch(err => console.log(err.message))
-  // }
+  useEffect(() => {
+    // table 
+    socket.current.emit("receive-table", roomId);
+    // player
+    socket.current.emit("receive-player", playerName, playerId, roomId);
+    return () => {
+      socket.current.off();
+    }
+  }, [table, player]);
 
-  // const storeWordData = async (data: IWord["words"]) => {
-  //   const convertedData: IWord["words"][] = await sliceWordList(data);
-  //   setWordSet(convertedData);
-  // };
-  // if (isLoading) return <Loading />
   return (
-    <GameTable />
+    <>
+      {(isLoading || !isLoggedIn) && <Loading />}
+      {table && JSON.stringify(table)}
+      fafeffffff
+      {player && JSON.stringify(player)}
+      {/* <GameTable /> */}
+    </>
   );
 };
 
