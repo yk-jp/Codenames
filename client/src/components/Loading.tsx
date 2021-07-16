@@ -3,8 +3,9 @@ import { FC } from 'react';
 const Loading: FC = (): JSX.Element => {
 
   return (
-    <div className="spinner-border text-success" role="status">
-      <span className="sr-only">Loading...</span>
+    <div className="d-flex align-items-center">
+      <strong>Loading...</strong>
+      <div className="spinner-border ml-auto" role="status" aria-hidden="true"></div>
     </div>
   )
 }

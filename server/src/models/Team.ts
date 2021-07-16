@@ -101,7 +101,7 @@ export default class Team {
     //swap data with the new Operative. 
     const operativeAt: number = this.operativeAt(spymaster.getId());
     const playerInfo = spymaster.getPlayerInfo();
-    const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.team);
+    const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.role, playerInfo.team);
 
     this.spymaster = spymaster;
     this.operatives[operativeAt] = newOperative;

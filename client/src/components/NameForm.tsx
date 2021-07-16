@@ -1,18 +1,33 @@
-import { FC, useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-const NameForm: FC<any> = ({ game, roomId }): JSX.Element => {
+import { FC, useState,useRef, useContext } from 'react';
+// hook 
+import { postDataForForm } from '../hooks/postDataForForm';
+// others
+import { LocationContext } from '../context/LocationHistoryContext';
+import { v4 as uuidv4 } from 'uuid';
+import config from '../config/config';
+const NameForm: FC = (): JSX.Element => {
   const name = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const joinRoom = (e: React.FormEvent<HTMLFormElement>): void => {
+  const locationHistory = useContext(LocationContext);
+  const joinRoom = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    axios.post("http://localhost:3001/form", {
-      playerName: JSON.stringify(name.current!.value) as string
-    },
-      { withCredentials: true }
-    ).then((res) => {
-    }).catch((err) => {
-      setErrorMsg("JOIN FAILED");
-    });
+    // save name to the session storage
+    sessionStorage.setItem("playerName", name.current!.value);
+    sessionStorage.setItem("playerId", uuidv4());
+    await postDataForForm(JSON.stringify(name.current!.value), config.server.form)
+      .then((res) => {
+        // store name to the sessionStorage 
+        goToGamePage();
+      }).catch((err) => {
+        setErrorMsg("JOIN FAILED");
+      });
+  };
+
+  const goToGamePage = (): void => {
+    // case1: a player who directly came from a game page. →　back to the previous page
+    if (locationHistory!.history.location.state != undefined) locationHistory!.history.replace(locationHistory!.history.location.state.prev, { loggedIn: true });
+    //navigate a player who came from the home page to a game page 
+    else locationHistory!.history.push(`/game/${uuidv4()}`, { loggedIn: true });
   };
 
   return (
@@ -33,7 +48,6 @@ const NameForm: FC<any> = ({ game, roomId }): JSX.Element => {
             {errorMsg && <h5>{errorMsg}</h5>}
           </div>
         </div>
-
       </div>
     </div>
   );

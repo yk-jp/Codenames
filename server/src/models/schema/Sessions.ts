@@ -9,7 +9,6 @@ db.define("Session", {
     type: DataTypes.STRING,
     primaryKey: true,
   },
-  playerId: DataTypes.STRING,
   expires: DataTypes.DATE,
   data: DataTypes.TEXT,
 }, {
@@ -21,7 +20,6 @@ function extendDefaultFields(defaults: any, session: any) {
   return {
     data: defaults.data,
     expires: defaults.expires,
-    playerId: session.playerId,
   };
 }
 
@@ -29,6 +27,7 @@ const sessionStore = new SequelizeStore({
   db: db,
   table: "Session",
   extendDefaultFields: extendDefaultFields,
+  expiration: 60 * 60 * 1000 * 5
 });
 
 export default sessionStore;
