@@ -5,6 +5,7 @@ import cors from 'cors';
 // socket
 import { Server, Socket } from "socket.io";
 import { socketConnection } from "./controllers/socket/socketConnectionController";
+import socketInitializeTableAndPlayerController from "./controllers/socket/socketInitialize";
 import socketRoomIdController from "./controllers/socket/socketRoomIdController";
 import socketJoinRoomController from "./controllers/socket/socketJoinRoomController";
 import socketTableController from "./controllers/socket/socketTableController";
@@ -86,6 +87,8 @@ gameIO.on("connection", (socket: any) => {
   socketRoomIdController(io, socket);
   // join room controller
   socketJoinRoomController(io, socket);
+  // initialize for table and player
+  socketInitializeTableAndPlayerController(io,socket);
   //table controller
   socketTableController(io, socket);
 
@@ -94,44 +97,6 @@ gameIO.on("connection", (socket: any) => {
   socket.on("update-table", (roomId: string, table: string | null) => {
     if (table) table_update(roomId, table);
   })
-
-  // socket.on("receive-player", (playerId: string) => {
-  //   let player: Operative = new Operative("", "", "");
-  //   let isStored: boolean = false;
-  //   player_find(playerId)
-  //     .then(data => {
-  //       player = Object.assign(JSON.parse(data!.get("player")), new Operative("", "", ""));
-  //       isStored = true;
-  //     })
-  //     .catch(() => {
-  //       console.log("could not find a player");
-  //     });
-  //   if (isStored) socket.emit("receive-player", JSON.stringify(player));
-  //   socket.emit("receive-player", JSON.stringify(player));
-  // })
-
-  // socket.once("store-player", (playerName: string, roomId: string) => {
-  //   const playerId: string = socket.data.playerId;
-  //   let table: Table = new Table();
-  //   let player: Operative = new Operative(playerName, playerId, "no team");
-  //   table_find(roomId)
-  //     .then(data => {
-  //       table = Object.assign(JSON.parse(data!.get("table")), new Table());
-
-  //     }).catch(() => {
-  //       console.log("table was not found");
-  //     });
-  //   table.addPlayer(player);
-  //   table.addPlayerToTeam(player);
-  //   // table update
-  //   table_update(roomId, JSON.stringify(table));
-  //   //store player
-  //   player_insert(playerId, roomId, JSON.stringify(player));
-
-  //   io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
-  //   socket.emit("receive-player", JSON.stringify(player));
-  // });
-
   socket.on("update-player", (player: string | null) => {
     if (player) player_update(player, socket.data.playerId);
   });
