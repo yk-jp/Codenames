@@ -1,9 +1,12 @@
-export default class Player {
+import IPlayer from "../interfaces/IPlayer";
+import Operative from "./Operative";
+import Spymaster from "./Spymaster";
+export default abstract class Player {
   protected name: string;
   protected id: string; //playerId
-  protected role:string; // operative or spymaster. to detect the role in frontend
+  protected role: string; // operative or spymaster. to detect the role in frontend
   protected team: string;
-  constructor(name: string, id: string, role:string,team: string) {
+  constructor(name: string, id: string, role: string, team: string) {
     this.name = name;
     this.id = id;
     this.role = role;
@@ -12,7 +15,7 @@ export default class Player {
 
   public getPlayerInfo() {
     return {
-      name: this.getName(), id: this.getId(), role:this.getRole(), team: this.getTeam()
+      name: this.getName(), id: this.getId(), role: this.getRole(), team: this.getTeam()
     };
   }
 
@@ -28,8 +31,12 @@ export default class Player {
     return this.id;
   }
 
-  public getRole():string { 
+  public getRole(): string {
     return this.role;
+  }
+
+  public setRole(role: string): void {
+    this.role = role;
   }
 
   public getTeam(): string {

@@ -1,5 +1,7 @@
 import Player from './Player';
-import Clue from '../interfaces/Clue';
+import Clue from '../interfaces/IClue';
+// interface
+import ISpymaster from '../interfaces/ISpymaster';
 export default class Spymaster extends Player {
   private clue: Clue;
 

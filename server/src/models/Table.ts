@@ -2,9 +2,11 @@
 import Team from './Team';
 import Card from './Card';
 import Player from './Player';
+import Spymaster from './Spymaster';
+import Operative from './Operative';
 //interface
-import GamePhase from '../interfaces/GamePhase';
-import Clue from '../interfaces/Clue';
+import IGamePhase from '../interfaces/GamePhase';
+import IClue from '../interfaces/IClue';
 
 /*
   RED's TURN 
@@ -24,14 +26,14 @@ import Clue from '../interfaces/Clue';
 */
 
 export default class Table {
-  private static PHASE: GamePhase = {
+  private static PHASE: IGamePhase = {
     "RED's TURN": "BLUE's TURN",
     "BLUE's TURN": "RED's TURN",
     "RED WON": "RED WON",
     "BLUE WON": "BLUE WON"
   };
   private phase: string;
-  private players: Player[]; //all team members
+  private players: (Spymaster | Operative)[]; //all team members
 
   public redTeam: Team;
   public blueTeam: Team;
@@ -44,17 +46,17 @@ export default class Table {
     this.phase = "RED's TURN";
     this.cards = [];
   }
-
-  public haveTurn(inputData: Clue) {
+  
+  public haveTurn(inputData: IClue) {
     if (this.phase == "RED's TURN") {
       // RED's TURN
       if (this.redTeam.getPhase() == "GIVING A CLUE") {
 
         if (inputData) {
           //set a clue from the spymaster 
-          this.redTeam.getSpymaster().setClue(inputData);
+          this.redTeam.getSpymaster()!.setClue(inputData);
           // go to the next action
-          this.redTeam.setPhase();
+          this.redTeam.changePhase();
         }
       } else if (this.redTeam.getPhase() == "GUESSING") {
 
@@ -65,7 +67,7 @@ export default class Table {
           // }
         } else {
           // go to the next action
-          this.redTeam.setPhase();
+          this.redTeam.changePhase();
         }
 
       }
@@ -75,9 +77,9 @@ export default class Table {
       if (this.blueTeam.getPhase() == "GIVING A CLUE") {
         if (inputData) {
           //set a clue from the spymaster 
-          this.redTeam.getSpymaster().setClue(inputData);
+          this.redTeam.getSpymaster()!.setClue(inputData);
           // go to the next action
-          this.redTeam.setPhase();
+          this.redTeam.changePhase();
         }
       }
       else {
@@ -94,7 +96,6 @@ export default class Table {
     return this.redTeam.getSpymaster() != null && this.blueTeam.getSpymaster() != null;
   }
 
-
   /*odd: get player in the red Team 
    even:get player in the blue team.
   */
@@ -105,12 +106,11 @@ export default class Table {
 
   /*
      Each time users log in, add user to players
-    NOTE: If 5 members are in the team, more players can't join.  
   */
-  public addPlayer(player: Player): void {
+  public addPlayer(player: Player): Player {
     this.setTeam(player);
-    if (this.isMaximumLimitOfPlayers()) return;
     this.players.push(player);
+    return player;
   }
 
   public addPlayerToTeam(player: Player): void {
@@ -118,9 +118,8 @@ export default class Table {
     else this.blueTeam.getTeamMembers().push(player);
   }
 
-  // check if 10 players joined in. 10 members are maximum limitation
-  public isMaximumLimitOfPlayers(): boolean {
-    return this.players.length == 10;
+  public setPlayers(players: (Spymaster | Operative)[]) { 
+    this.players = players;
   }
 
   // the number of players has to be more than two.
@@ -132,14 +131,16 @@ export default class Table {
     return this.phase;
   }
 
+  public setGamePhase(phase:string): void {
+    this.phase = phase;
+  }
+
   //to switch gamephase
-  public setGamePhase(): void {
+  public changeGamePhase(): void {
     this.phase = Table.PHASE[this.phase];
   }
 
   public getPlayers(): Player[] {
     return this.players;
   }
-
-
 }
