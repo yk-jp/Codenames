@@ -1,11 +1,11 @@
 import Player from '../../models/schema/Players';
 
-export const player_find = async (id: string) => {
-  return await Player.findOne({ where: { id: id } })
+export const player_find = (id: string) => {
+  return Player.findOne({ where: { id: id } })
 }
 
-export const player_findAll = async (roomId: string) => {
-  await Player.findAll({ where: { roomId: roomId } });
+export const player_findAll = (roomId: string) => {
+  return Player.findAll({ where: { roomId: roomId } });
 }
 
 // when player connected the room

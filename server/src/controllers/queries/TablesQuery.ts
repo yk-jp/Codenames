@@ -1,8 +1,8 @@
 import { table } from "console";
 import Tables from "../../models/schema/Tables";
 
-export const table_find = async (roomId: string) => {
-  return await Tables.findOne({ where: { roomId: roomId } })
+export const table_find = (roomId: string) => {
+  return Tables.findOne({ where: { roomId: roomId } })
 }
 
 // when the room is created

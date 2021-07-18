@@ -2,8 +2,6 @@
 import Team from './Team';
 import Card from './Card';
 import Player from './Player';
-import Spymaster from './Spymaster';
-import Operative from './Operative';
 //interface
 import IGamePhase from '../interfaces/GamePhase';
 import IClue from '../interfaces/IClue';
@@ -33,7 +31,7 @@ export default class Table {
     "BLUE WON": "BLUE WON"
   };
   private phase: string;
-  private players: (Spymaster | Operative)[]; //all team members
+  private players: Player[]; //all team members
 
   public redTeam: Team;
   public blueTeam: Team;
@@ -99,18 +97,17 @@ export default class Table {
   /*odd: get player in the red Team 
    even:get player in the blue team.
   */
-  public setTeam(player: Player): void {
+  public setTeam(player: Player): Player {
     const team: string = this.players.length % 2 ? "RED" : "BLUE";
     player.setTeam(team);
+    return player;
   }
 
   /*
      Each time users log in, add user to players
   */
-  public addPlayer(player: Player): Player {
-    this.setTeam(player);
+  public addPlayer(player: Player): void {
     this.players.push(player);
-    return player;
   }
 
   public addPlayerToTeam(player: Player): void {
@@ -118,7 +115,7 @@ export default class Table {
     else this.blueTeam.getTeamMembers().push(player);
   }
 
-  public setPlayers(players: (Spymaster | Operative)[]) { 
+  public setPlayers(players: Player[]) { 
     this.players = players;
   }
 

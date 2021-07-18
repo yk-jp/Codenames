@@ -1,19 +1,23 @@
+// model
 import Table from "../../models/Table";
-import { table_find, table_insert, table_update, table_delete } from '../queries/TablesQuery'
+import TablesInstance from "../../interfaces/schema/Tables";
 import ConvertJson from "../../models/utils/convertJson";
+// query
+import { table_find } from '../queries/TablesQuery'
 
 const socketTableController = (io: any, socket: any) => {
   //  table controller 
-  socket.on("receive-table", (roomId: string) => {
-    let table: Table = new Table();
-    table_find(roomId)
-      .then(data => {
-        table = ConvertJson.toTable(JSON.parse(data!.get("table")));
-        console.log(table);
-        io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
-      }).catch(() => {
-        console.log("table was not found");
-      });
+  socket.on("receive-table", async (roomId: string) => {
+    try {
+      const tableData: TablesInstance | null = await table_find(roomId);
+
+      if(!tableData) throw new Error("table was not found");
+
+      const table:Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
+      io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
+    } catch (err) {
+      console.log(err);
+    }
   })
 };
 

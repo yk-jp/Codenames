@@ -103,14 +103,15 @@ export default class Team {
   // if another player already have a role of spymaster, replace the role to an operative. 
   public setSpymaster(spymaster: Spymaster | null): void {
     if (!this.spymaster) this.spymaster = spymaster; //spymaster == null
-    // The new spymaster's data must be still stored in operatives.
-    //swap data with the new Operative. 
-    const operativeAt: number = this.operativeAt(spymaster!.getId());
-    const playerInfo = spymaster!.getPlayerInfo();
-    const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.role, playerInfo.team);
-
-    this.spymaster = spymaster;
-    this.operatives[operativeAt] = newOperative;
+    else {
+      // The new spymaster's data must be still stored in operatives.
+      //swap data with the new Operative. 
+      const operativeAt: number = this.operativeAt(spymaster!.getId());
+      const playerInfo = spymaster!.getPlayerInfo();
+      const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.role, playerInfo.team);
+      this.spymaster = spymaster;
+      this.operatives[operativeAt] = newOperative;
+    }
   }
 
   public operativeAt(id: string): number {
