@@ -6,7 +6,7 @@ import { Sequelize, DataTypes, Model } from "sequelize";
   findAll: return Promise<Array<Model>>
 */
 
-export const Words_get = async () => {
-  await En_words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true });
+export const Words_get = () => {
+  return En_words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true });
 }
 

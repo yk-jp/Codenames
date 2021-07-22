@@ -4,7 +4,7 @@ import Spymaster from './Spymaster';
 import Operative from './Operative';
 // interface 
 import TeamPhase from '../interfaces/ITeamPhase';
-
+import IPlayer from '../interfaces/IPlayer';
 export default class Team {
   private guessCount: number; //spymaster gives a clue and the team keeps the count that they can guess.
   private cardsRemaining: number;
@@ -15,7 +15,7 @@ export default class Team {
     "WAITING FOR TURN": "GIVING A CLUE"
   };
   private phase: string;
-  private teamMembers: (Spymaster | Operative)[];
+  private teamMembers: Player[];
   private spymaster: Spymaster | null;
   private operatives: Operative[];
 
@@ -75,7 +75,7 @@ export default class Team {
   }
 
   public setPhase(phase: string): void {
-    this.phase = this.phase;
+    this.phase = phase;
   }
 
   public changePhase(): void {
@@ -90,6 +90,41 @@ export default class Team {
     this.teamMembers.push(player);
   }
 
+  public deleteTeamMember(player: IPlayer): Spymaster | Operative {
+    const deletedPlayer: Spymaster | Operative = this.deleteMemberFromTeamMembers(player);
+    if (player.role === "OPERATIVE") this.deleteOperative(player);
+    else this.deleteOperative(player);
+
+    return deletedPlayer;
+  }
+
+  public deleteMemberFromTeamMembers(target: IPlayer): Spymaster | Operative {
+    const playerAt: number = this.playerAt(this.teamMembers, target.id) as number;
+    const deletedPlayer: Spymaster | Operative = (target.role === "OPERATIVE") ? Object.assign(new Operative("", "", "", ""), this.teamMembers[playerAt]) : Object.assign(new Spymaster("", "", "", ""), this.teamMembers[playerAt]);
+    this.teamMembers[playerAt] = this.teamMembers[this.teamMembers.length - 1];
+    this.teamMembers.pop();
+    return deletedPlayer;
+  };
+
+  public deleteSpymaster(target: IPlayer): Spymaster | null {
+    let spymaster: Spymaster | null = null;
+    if (!this.spymaster) return null;
+    if (this.spymaster.getId() === target.id) {
+      spymaster = this.spymaster;
+      this.spymaster = null;
+    }
+    return spymaster;
+  }
+
+  public deleteOperative(target: IPlayer): Operative | null {
+    const playerAt: number | null = this.playerAt(this.operatives, target.id);
+    if (!playerAt) return null;
+    const deletedPlayer: Operative = Object.assign(new Operative("", "", "", ""), this.operatives[playerAt]);
+    this.operatives[playerAt] = this.operatives[this.operatives.length - 1];
+    this.operatives.pop();
+    return deletedPlayer;
+  }
+
   public setOperative(operative: Operative | Operative[]): void {
     if (operative instanceof Operative) this.operatives.push(operative);
     else this.operatives.push(...operative);
@@ -100,27 +135,17 @@ export default class Team {
     return this.spymaster;
   }
 
-  // if another player already have a role of spymaster, replace the role to an operative. 
   public setSpymaster(spymaster: Spymaster | null): void {
-    if (!this.spymaster) this.spymaster = spymaster; //spymaster == null
-    else {
-      // The new spymaster's data must be still stored in operatives.
-      //swap data with the new Operative. 
-      const operativeAt: number = this.operativeAt(spymaster!.getId());
-      const playerInfo = spymaster!.getPlayerInfo();
-      const newOperative: Operative = new Operative(playerInfo.name, playerInfo.id, playerInfo.role, playerInfo.team);
-      this.spymaster = spymaster;
-      this.operatives[operativeAt] = newOperative;
-    }
+    if (!this.spymaster) this.spymaster = spymaster;
+    else this.spymaster = spymaster;
   }
 
-  public operativeAt(id: string): number {
-    let operativeAt: number = -1;
-    this.operatives.map((operative, index) => {
-      if (operative.getId() == id) operativeAt = index;
+  public playerAt(players: Player[], playerId: string): number | null {
+    let playerAt: number | null = null;
+    players.map((player, index) => {
+      if (player.getId() === playerId) playerAt = index;
     });
-
-    return operativeAt;
+    return playerAt;
   }
 
 }

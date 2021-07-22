@@ -2,10 +2,11 @@
 import Team from './Team';
 import Card from './Card';
 import Player from './Player';
+import Operative from './Operative';
 //interface
 import IGamePhase from '../interfaces/GamePhase';
 import IClue from '../interfaces/IClue';
-
+import IPlayer from '../interfaces/IPlayer';
 /*
   RED's TURN 
       1.spymaster 
@@ -44,7 +45,7 @@ export default class Table {
     this.phase = "RED's TURN";
     this.cards = [];
   }
-  
+
   public haveTurn(inputData: IClue) {
     if (this.phase == "RED's TURN") {
       // RED's TURN
@@ -103,6 +104,22 @@ export default class Table {
     return player;
   }
 
+  public deletePlayerFromPlayers(player: IPlayer): Player {
+    const playerAt: number = this.playerAt(player);
+    const deletedPlayer: Operative = Object.assign(new Operative("", "", "", ""), this.players[playerAt]);
+    this.players[playerAt] = this.players[this.players.length - 1];
+    this.players.pop();
+    return deletedPlayer;
+  };
+
+  public playerAt(target: IPlayer): number {
+    let playerAt: number = 0;
+    this.players.map((player, index) => {
+      if (target.id == player.getId()) playerAt = index;
+    });
+    return playerAt;
+  };
+
   /*
      Each time users log in, add user to players
   */
@@ -111,16 +128,23 @@ export default class Table {
   }
 
   public addPlayerToTeam(player: Player): void {
+    // give a team to players
+    player = this.setTeam(player);
     if (player.getTeam() == "RED") this.redTeam.getTeamMembers().push(player);
     else this.blueTeam.getTeamMembers().push(player);
   }
 
-  public setPlayers(players: Player[]) { 
+  public deletePlayerFromTeam(player: IPlayer): Player {
+    if (player.team == "RED") return this.redTeam.deleteTeamMember(player);
+    else return this.blueTeam.deleteTeamMember(player);
+  }
+
+  public setPlayers(players: Player[]) {
     this.players = players;
   }
 
   // the number of players has to be more than two.
-  public isMoreTwoPlayers(): boolean {
+  public joinedMoreTwoPlayers(): boolean {
     return this.players.length == 2;
   }
 
@@ -128,7 +152,7 @@ export default class Table {
     return this.phase;
   }
 
-  public setGamePhase(phase:string): void {
+  public setGamePhase(phase: string): void {
     this.phase = phase;
   }
 
