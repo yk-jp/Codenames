@@ -11,10 +11,10 @@ const socketTableController = (io: any, socket: any) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
 
-      if(!tableData) throw new Error("table was not found");
+      if (!tableData) throw new Error("table was not found");
 
-      const table:Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
-      io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));
+      const table: Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
+      socket.emit("receive-table", JSON.stringify(table));
     } catch (err) {
       console.log(err);
     }
