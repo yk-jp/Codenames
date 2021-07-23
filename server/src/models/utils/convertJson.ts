@@ -27,8 +27,9 @@ export default class ConvertJson {
   // team
   public static toTeam(team: ITeam): Team {
     let convertedData: Team = new Team(team.name);
+    convertedData.setTeamMembers(this.toPlayers(team.teamMembers));
     convertedData.setSpymaster(this.toSpymaster(team.spymaster));
-    convertedData.setOperative(this.toPlayers(team.teamMembers) as Operative[]);
+    convertedData.setOperative(this.toPlayers(team.operatives) as Operative[]);
     convertedData.setPhase(team.phase);
     convertedData.setGuessCount(team.guessCount);
     convertedData.setCardsRemaining(team.cardsRemaining);
@@ -36,8 +37,8 @@ export default class ConvertJson {
   }
 
   // players or operatives
-  public static toPlayers(jsonData: (ISpymaster | IOperative)[] | null): (Spymaster | Operative)[] | null {
-    if (!jsonData) return null;
+  public static toPlayers(jsonData: (ISpymaster | IOperative)[] | null): Player[] | [] {
+    if (!jsonData) return [];
     return jsonData.map(player => {
       if (player.role == "OPERATIVE") return this.toOperative(player) as Operative;
       else return this.toSpymaster(player as ISpymaster) as Spymaster;
@@ -50,7 +51,7 @@ export default class ConvertJson {
   }
 
   // operative
-  public static toOperative(operative: IOperative): Operative | null {
+  public static toOperative(operative: IOperative | null): Operative | null {
     if (!operative) return null;
     return new Operative(operative.name, operative.id, operative.role, operative.team);
   }

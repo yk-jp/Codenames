@@ -7,20 +7,13 @@ import { Server, Socket } from "socket.io";
 import socketDisconnectionController from "./controllers/socket/socketDisconnectionController";
 import socketInitializeTableAndPlayerController from "./controllers/socket/socketInitializeTableAndPlayerController";
 import socketRoomIdController from "./controllers/socket/socketRoomIdController";
-import socketJoinRoomController from "./controllers/socket/socketJoinRoomController";
+import socketJoinAndLeaveRoomController from "./controllers/socket/socketJoinAndLeaveRoomController";
 import socketTableController from "./controllers/socket/socketTableController";
 import socketPlayerController from "./controllers/socket/socketPlayerController";
-// session
-import session from 'express-session';
-import sessionStore from "./models/schema/Sessions";
 // routes
 import nameFormRoutes from './Routes/nameFormRoutes';
-
 // db
-import db from './config/db';
 import { db_synchronization } from "./config/db_synchronization";
-import { player_find, player_findAll, player_insert, player_delete, player_update } from "./controllers/queries/PlayersQuery";
-import { table_find, table_insert, table_update, table_delete } from "./controllers/queries/TablesQuery";
 
 const app = express();
 const port = config.server.port || "3001";
@@ -39,19 +32,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// const sessionMiddleware = session({
-//   secret: 'keyboard cat',
-//   resave: false,
-//   saveUninitialized: false,
-//   store: sessionStore,
-//   cookie: {
-//     maxAge: 60 * 60 * 1000 * 5
-//   }
-// });
-
-// // register middleware in Express
-// app.use(sessionMiddleware);
-
 // routes
 app.use('/form', nameFormRoutes);
 
@@ -66,33 +46,20 @@ const io = new Server(server, {
 
 const gameIO = io.of("/game");
 
-// const wrapper = (middleware: any) => (socket: any, next: any) => middleware(socket.request, {}, next);
-
-
-// gameIO.use(wrapper(sessionMiddleware));
-
 //game
-gameIO.on("connection", (socket: any) => {
+gameIO.on("connection", (socket: Socket) => {
   console.log("connected in game page");
-
   // roomId controller
   socketRoomIdController(io, socket);
   // join room controller
-  socketJoinRoomController(io, socket);
+  socketJoinAndLeaveRoomController(io, socket);
   // initialize for table and player
   socketInitializeTableAndPlayerController(io, socket);
   //table controller
   socketTableController(io, socket);
-
   // player controller
   socketPlayerController(io, socket);
-  socket.on("update-table", async (roomId: string, table: string | null) => {
-    if (table) await table_update(roomId, table);
-  })
-  socket.on("update-player", async (player: string | null) => {
-    if (player) await player_update(player, socket.data.playerId);
-  });
-
+  // disconnection controller
   socketDisconnectionController(io, socket);
 });
 
