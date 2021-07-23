@@ -86,8 +86,9 @@ export default class Team {
     return this.teamMembers;
   }
 
-  public setTeamMembers(player: Player): void {
-    this.teamMembers.push(player);
+  public setTeamMembers(players: Player | Player[]): void {
+    if (Array.isArray(players)) this.teamMembers.push(...players); // If players is array,
+    else this.teamMembers.push(players);
   }
 
   public deleteTeamMember(player: IPlayer): Spymaster | Operative {

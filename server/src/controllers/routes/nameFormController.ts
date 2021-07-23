@@ -1,8 +1,6 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 
-const startSession = (req: any, res: Response) => {
-  // if (!req.session.start) req.session.start = true;
-  // req.session.save();
+const startSession = (req: Request, res: Response) => {
   res.end();
 };
 

@@ -1,3 +1,4 @@
+import { Socket } from "socket.io";
 // model
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";
@@ -8,8 +9,7 @@ import TablesInstance from "../../interfaces/schema/Tables";
 import { table_find, table_insert, table_update } from '../queries/TablesQuery'
 import { player_insert } from "../queries/PlayersQuery";
 import PlayersInstance from "../../interfaces/schema/Players";
-
-const socketInitializeTableAndPlayerController = (io: any, socket: any) => {
+const socketInitializeTableAndPlayerController = (io: any, socket: Socket) => {
   //  table controller 
   socket.once("initialize-table-and-player", async (roomId: string, playerName: string, playerId: string) => {
     const tableData: TablesInstance | null = await table_find(roomId);

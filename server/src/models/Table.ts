@@ -130,8 +130,8 @@ export default class Table {
   public addPlayerToTeam(player: Player): void {
     // give a team to players
     player = this.setTeam(player);
-    if (player.getTeam() == "RED") this.redTeam.getTeamMembers().push(player);
-    else this.blueTeam.getTeamMembers().push(player);
+    if (player.getTeam() == "RED") this.redTeam.setTeamMembers(player);
+    else this.blueTeam.setTeamMembers(player);
   }
 
   public deletePlayerFromTeam(player: IPlayer): Player {
