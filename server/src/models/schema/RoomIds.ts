@@ -1,6 +1,6 @@
 import db from '../../config/db';
 import RoomIdsInstance from '../../interfaces/schema/RoomIds';
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import Tables from './Tables';
 import Players from "./Players";
 const RoomIds = db.define<RoomIdsInstance>('RoomIds', {

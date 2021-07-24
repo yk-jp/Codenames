@@ -1,28 +1,27 @@
 import db from '../../config/db';
-import En_wordsInstance from '../../interfaces/schema/En_words';
-import { Sequelize, DataTypes } from "sequelize";
+import WordsInstance from '../../interfaces/schema/Words';
+import { DataTypes } from "sequelize";
 
-const En_words = db.define<En_wordsInstance>('En_words', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+const Words = db.define<WordsInstance>('Words', {
+  word: {
+    type: DataTypes.STRING,
+    allowNull: false,
     unique: true,
     validate: {
       notEmpty: true
     }
   },
-  word: {
+  language: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
       notEmpty: true
     }
-  },
+  }
 },
   {
-    tableName: 'en_words',
+    tableName: 'words',
     timestamps: false // avoid adding createdAt,updatedAt columns automatically
   });
 
-export default En_words;
+export default Words;

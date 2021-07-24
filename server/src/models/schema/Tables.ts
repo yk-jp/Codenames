@@ -1,6 +1,6 @@
 import db from '../../config/db';
 import TablesInstance from '../../interfaces/schema/Tables';
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 
 //id:roomId
 const Tables = db.define<TablesInstance>('Tables', {

@@ -1,6 +1,6 @@
-import En_wordsInstance from "./schema/En_words";
+import IWord from "./IWord";
 
 export default interface ICard {
-  word:En_wordsInstance;
-  team:string;
+  wordData: IWord;
+  team: string;
 }

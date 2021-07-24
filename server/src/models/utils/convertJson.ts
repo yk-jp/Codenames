@@ -31,7 +31,7 @@ export default class ConvertJson {
     convertedData.setSpymaster(this.toSpymaster(team.spymaster));
     convertedData.setOperative(this.toPlayers(team.operatives) as Operative[]);
     convertedData.setPhase(team.phase);
-    convertedData.setGuessCount(team.guessCount);
+    convertedData.setGuessCountForJSON(team.guessCount);
     convertedData.setCardsRemaining(team.cardsRemaining);
     return convertedData;
   }
@@ -66,7 +66,7 @@ export default class ConvertJson {
 
   // card
   public static toCard(card: ICard): Card {
-    return new Card(card.team, card.word);
+    return new Card(card.team, card.wordData);
   }
 
   public static toCards(cards: ICard[]): Card[] {
