@@ -58,6 +58,11 @@ export default class Team {
     else this.guessCount = parseInt(number) + 1;
   }
 
+  public setGuessCountForJSON(number: string): void {
+    if (number == "∞") this.guessCount = Infinity;
+    else this.guessCount = parseInt(number);
+  }
+
   public resetGuessCount(): void {
     this.guessCount = -1;
   }

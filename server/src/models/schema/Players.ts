@@ -1,13 +1,13 @@
 import db from '../../config/db';
 import PlayersInstance from '../../interfaces/schema/Players';
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 
 const Players = db.define<PlayersInstance>('Players', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    allowNull:false,
+    allowNull: false,
     validate: {
       notEmpty: true
     }
@@ -22,7 +22,7 @@ const Players = db.define<PlayersInstance>('Players', {
   },
   player: {
     type: DataTypes.TEXT,
-    allowNull:false,
+    allowNull: false,
     validate: {
       notEmpty: true
     }

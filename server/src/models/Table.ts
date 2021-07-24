@@ -43,7 +43,7 @@ export default class Table {
     this.redTeam = new Team("RED");
     this.blueTeam = new Team("BLUE");
     this.phase = "RED's TURN";
-    this.cards = [];
+    this.cards = Array(25).fill(new Card("NO TEAM", { word: "", language: "" }));
   }
 
   public haveTurn(inputData: IClue) {

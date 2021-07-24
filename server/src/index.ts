@@ -17,7 +17,6 @@ import nameFormRoutes from './Routes/nameFormRoutes';
 import { db_synchronization } from "./config/db_synchronization";
 // scheduling jobs
 import { cronJobs } from "./controllers/cronJobs/cronJobs";
-
 const app = express();
 const port = config.server.port || "3001";
 const host = config.server.host || "localhost";

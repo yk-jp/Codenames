@@ -1,5 +1,4 @@
 import { Model } from "sequelize";
-import Table from '../../models/Table';
 
 interface TablesAttributes {
   roomId: string, //roomId
