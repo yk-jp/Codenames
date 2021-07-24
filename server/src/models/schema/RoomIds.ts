@@ -12,11 +12,11 @@ const RoomIds = db.define<RoomIdsInstance>('RoomIds', {
     validate: {
       notEmpty: true
     }
-  },
+  }
 },
   {
     tableName: 'roomIds',
-    timestamps: false // avoid adding createdAt,updatedAt columns automatically
+    timestamps: true //use it for scheduling jobs
   });
 
 /*
@@ -24,7 +24,7 @@ const RoomIds = db.define<RoomIdsInstance>('RoomIds', {
   targetKey = the key in the column of RoomIds model that link to foreignKey
 */
 
-Tables.belongsTo(RoomIds, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade'});
+Tables.belongsTo(RoomIds, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade' });
 RoomIds.hasOne(Tables);
 
 Players.belongsTo(RoomIds, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade' });
