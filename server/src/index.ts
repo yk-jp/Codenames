@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import config from './config/config';
 import cors from 'cors';
+import schedule from 'node-schedule';
 // socket
 import { Server, Socket } from "socket.io";
 import socketDisconnectionController from "./controllers/socket/socketDisconnectionController";
@@ -14,6 +15,8 @@ import socketPlayerController from "./controllers/socket/socketPlayerController"
 import nameFormRoutes from './Routes/nameFormRoutes';
 // db
 import { db_synchronization } from "./config/db_synchronization";
+// scheduling jobs
+import { cronJobs } from "./controllers/cronJobs/cronJobs";
 
 const app = express();
 const port = config.server.port || "3001";
@@ -21,6 +24,11 @@ const host = config.server.host || "localhost";
 
 //Synchronizing database 
 db_synchronization();
+
+/* Scheduling jobs 
+   clean up database table every 4 hours
+*/
+schedule.scheduleJob('0 */4 * * *', cronJobs);
 
 // It's for the express router
 app.use(cors({

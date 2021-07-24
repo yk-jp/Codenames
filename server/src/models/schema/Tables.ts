@@ -24,7 +24,7 @@ const Tables = db.define<TablesInstance>('Tables', {
 },
   {
     tableName: 'tables',
-    timestamps: false // avoid adding createdAt,updatedAt columns automatically
+    timestamps: true
   });
 
 export default Tables;
