@@ -66,7 +66,7 @@ export default class ConvertJson {
 
   // card
   public static toCard(card: ICard): Card {
-    return new Card(card.team, card.wordData);
+    return new Card(card.team, card.word);
   }
 
   public static toCards(cards: ICard[]): Card[] {
