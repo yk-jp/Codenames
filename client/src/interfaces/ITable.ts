@@ -1,7 +1,13 @@
+import IPlayer from "./IPlayer";
+import ITeam from "./ITeam";
+import ICard from "./ICard";
+
 export default interface ITable {
-  table: {
-    id: string,
-    style: string,
-    team: string
-  }
+  players: IPlayer[];
+  redTeam:ITeam;
+  blueTeam:ITeam;
+  phase:string;
+  cards:ICard[];
 }
+
+

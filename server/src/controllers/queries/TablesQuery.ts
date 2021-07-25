@@ -1,4 +1,3 @@
-import { table } from "console";
 import Tables from "../../models/schema/Tables";
 
 export const table_find = (roomId: string) => {

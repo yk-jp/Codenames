@@ -98,10 +98,9 @@ export default class Table {
   /*odd: get player in the red Team 
    even:get player in the blue team.
   */
-  public setTeam(player: Player): Player {
+  public setTeam(player: Player): void {
     const team: string = this.players.length % 2 ? "RED" : "BLUE";
     player.setTeam(team);
-    return player;
   }
 
   public deletePlayerFromPlayers(player: IPlayer): Player {
@@ -129,13 +128,13 @@ export default class Table {
 
   public addPlayerToTeam(player: Player): void {
     // give a team to players
-    player = this.setTeam(player);
-    if (player.getTeam() == "RED") this.redTeam.setTeamMembers(player);
+    this.setTeam(player);
+    if (player.getTeam() === "RED") this.redTeam.setTeamMembers(player);
     else this.blueTeam.setTeamMembers(player);
   }
 
   public deletePlayerFromTeam(player: IPlayer): Player {
-    if (player.team == "RED") return this.redTeam.deleteTeamMember(player);
+    if (player.team === "RED") return this.redTeam.deleteTeamMember(player);
     else return this.blueTeam.deleteTeamMember(player);
   }
 

@@ -1,6 +1,5 @@
 import RoomIds from "../../models/schema/RoomIds";
 
-
 export const roomId_find = (roomId: string) => {
   return RoomIds.findOne({ where: { roomId: roomId } });
 }

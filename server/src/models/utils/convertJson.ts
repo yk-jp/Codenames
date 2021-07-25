@@ -47,7 +47,6 @@ export default class ConvertJson {
 
   public static toPlayer(jsonData: ISpymaster | IOperative): Spymaster | Operative {
     return jsonData.role == "OPERATIVE" ? this.toOperative(jsonData as IOperative) as Operative : this.toSpymaster(jsonData as ISpymaster) as Spymaster;
-
   }
 
   // operative

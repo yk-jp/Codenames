@@ -24,7 +24,7 @@ const Tables = db.define<TablesInstance>('Tables', {
 },
   {
     tableName: 'tables',
-    timestamps: true
+    timestamps: false
   });
 
 export default Tables;

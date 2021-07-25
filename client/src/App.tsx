@@ -9,21 +9,25 @@ import NameForm from './components/NameForm';
 import NotFound from './components/NotFound';
 // context
 import { LocationHistoryProvider } from './context/LocationHistoryContext';
-
+import { SocketProvider } from './context/SocketContext';
+import { GameDataProvider } from './context/GameDataContext';
 const App: FC = () => {
   return (
-
     <Router>
       <div className="App">
         <Title />
-        <LocationHistoryProvider>
-        <Switch>  
-            <Route exact path="/" component={Home} />
-            <Route exact path="/form" component={NameForm} />
-            <Route path="/game/:roomId" component={Game} />
-            <Route path="*" component={NotFound} />
-        </Switch>
-        </LocationHistoryProvider>
+        <SocketProvider>
+          <GameDataProvider>
+            <LocationHistoryProvider>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/form" component={NameForm} />
+                <Route path="/game/:roomId" component={Game} />
+                <Route path="*" component={NotFound} />
+              </Switch>
+            </LocationHistoryProvider>
+          </GameDataProvider>
+        </SocketProvider>
       </div>
     </Router>
   );

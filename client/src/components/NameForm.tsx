@@ -25,9 +25,9 @@ const NameForm: FC = (): JSX.Element => {
 
   const goToGamePage = (): void => {
     // case1: a player who directly came from a game page. →　back to the previous page
-    if (locationHistory!.history.location.state != undefined) locationHistory!.history.replace(locationHistory!.history.location.state.prev, { loggedIn: true });
+    if (locationHistory!.location.state != undefined) locationHistory!.replace(locationHistory!.location.state.prev, { loggedIn: true });
     //navigate a player who came from the home page to a game page 
-    else locationHistory!.history.push(`/game/${uuidv4()}`, { loggedIn: true });
+    else locationHistory!.push(`/game/${uuidv4()}`, { loggedIn: true });
   };
 
   return (
