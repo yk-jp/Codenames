@@ -5,8 +5,8 @@
   height: 100vh;
 }
 
-.h-20px { 
-  height:20px;
+.h-20px {
+  height: 20px;
 }
 
 .h-75 {
@@ -22,11 +22,13 @@
 .title {
   color: black;
   text-align: center;
-  display:inline!important;
+  display: inline!important;
 }
 
 /************** game page *****************/
+
 /* name form */
+
 .name {
   border: 2px solid #198754;
   width: 300px;
@@ -51,13 +53,14 @@ table, th, tr, td {
 }
 
 /* copy button*/
-.btn-sm { 
+
+.btn-sm {
   padding: 0 0.5rem !important;
   font-size: 0.5rem;
   border-radius: 0.1rem;
 }
 
-.stopHover{ 
+.stopHover {
   pointer-events: none;
 }
 
@@ -74,12 +77,18 @@ table, th, tr, td {
   font-size: 3vw;
 }
 
+/* team table */
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (min-width: 768px) {
   .word {
     font-size: 1.5vw;
   }
   .card {
-    width:90px;
-    height:90px
+    width: 90px;
+    height: 90px
   }
 }

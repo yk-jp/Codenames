@@ -4,7 +4,7 @@ import ITeam from '../interfaces/ITeam';
 // useContext
 import { GameDataContext } from '../context/GameDataContext';
 
-const TeamTable: FC<any> = ({style}): JSX.Element => {
+const TeamTable: FC<any> = ({ style }): JSX.Element => {
   const { tableData } = useContext(GameDataContext);
   const team: ITeam = style.team === "RED" ? tableData.table.redTeam : tableData.table.blueTeam;
   // console.log(team);
@@ -18,8 +18,7 @@ const TeamTable: FC<any> = ({style}): JSX.Element => {
       <tbody>
         {team.teamMembers.map((member, index) => {
           return (
-            <tr className="text-center" key={index+1}>
-              <td>{index + 1}</td>
+            <tr className="text-center" key={index + 1}>
               <td>{member.name}</td>
             </tr>
           )

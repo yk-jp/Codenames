@@ -11,6 +11,7 @@ const NameForm: FC = (): JSX.Element => {
   const locationHistory = useContext(LocationContext);
   const joinRoom = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(name.current!.value.length > 10) name.current!.value = name.current!.value.substring(0,10);
     // save name to the session storage
     sessionStorage.setItem("playerName", name.current!.value);
     sessionStorage.setItem("playerId", uuidv4());

@@ -16,8 +16,9 @@ const RoomIds = db.define<RoomIdsInstance>('RoomIds', {
 },
   {
     tableName: 'roomIds',
-    updatedAt:false,
-    createdAt:true//use it for scheduling jobs
+    timestamps:false
+    // updatedAt:false,
+    // createdAt:true//use it for scheduling jobs
   });
 
 /*
@@ -30,5 +31,6 @@ RoomIds.hasOne(Tables);
 
 Players.belongsTo(RoomIds, { foreignKey: "roomId", targetKey: "roomId", onDelete: 'cascade' });
 RoomIds.hasMany(Players);
+
 
 export default RoomIds;

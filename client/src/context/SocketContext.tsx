@@ -1,17 +1,10 @@
 import { createContext } from 'react';
-import { io, Socket } from "socket.io-client";
-import config from '../config/config';
+import { Socket } from "socket.io-client";
 
-export const SocketContext = createContext<Socket>(io(config.server.game, {
-  autoConnect: false,
-  withCredentials: true
-}));
+export const SocketContext = createContext<Socket | any>(null);
 
 export const SocketProvider = ({ children }): JSX.Element => {
-  const socket = io(config.server.game, {
-    autoConnect: false,
-    withCredentials: true
-  });
+  let socket: Socket | null = null; //If socket is defined(set up) here, data transaction doesn't work well. Clean up function in game.tsx is fired even in home page.
 
   return (
     <SocketContext.Provider value={socket}>
