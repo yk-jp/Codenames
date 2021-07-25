@@ -1,6 +1,4 @@
-import IWord from "./IWord";
-
 export default interface ICard {
-  wordData: IWord;
+  word: string;
   team: string;
 }
