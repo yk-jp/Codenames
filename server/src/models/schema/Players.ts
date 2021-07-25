@@ -8,6 +8,7 @@ const Players = db.define<PlayersInstance>('Players', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
+    unique:true,
     validate: {
       notEmpty: true
     }

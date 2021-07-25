@@ -5,13 +5,19 @@ import Loading from './Loading';
 import { LocationContext } from '../context/LocationHistoryContext';
 import { SocketContext } from '../context/SocketContext';
 import { GameDataContext } from '../context/GameDataContext';
+import { io, Socket } from "socket.io-client";
+import config from '../config/config';
 const Game: FC = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const roomId: string = window.location.pathname.split("/").pop() as string;
   // context
   const locationHistory = useContext(LocationContext);
-  const socket = useContext(SocketContext);
+  let socket: Socket = useContext(SocketContext);
+  socket = io(config.server.game, {
+    autoConnect: false,
+    withCredentials: true
+  });
   const { tableData, playerData } = useContext(GameDataContext);
   // data from localstorage
   const playerName: string = sessionStorage.getItem("playerName") as string;
@@ -64,17 +70,12 @@ const Game: FC = (): JSX.Element => {
       });
 
       socket.on("disconnect", () => {
-        console.log("a");
         // when disconnecting
-        socket.emit("leave-room", roomId, playerId);
-        socket.off();
-        socket.close();
-        sessionStorage.clear();
-
+        disconnectionHandler();
       });
     }
+
     return () => {
-      console.log("b");
       disconnectionHandler();
     }
   }, []);
@@ -82,17 +83,7 @@ const Game: FC = (): JSX.Element => {
   return (
     <>
       {(isLoading || !isLoggedIn) && <Loading />}
-      {/* {tableData.table && <GameTable/>} */}
-      <div className="my-4">
-        {tableData.table && JSON.stringify(tableData.table.players)}
-      </div>
-      {tableData.table && JSON.stringify(tableData.table.redTeam)}
-      <div className="my-4">
-        {tableData.table && JSON.stringify(tableData.table.blueTeam)}
-      </div>
-      <div className="my-4">
-        {tableData.table && JSON.stringify(playerData.player)}
-      </div>
+      {tableData.table && <GameTable />}
     </>
   );
 };

@@ -53,7 +53,7 @@ describe('add player ', () => {
 
     const update = await table_update("test", JSON.stringify(newTable));
 
-    const again:TablesInstance | null = await table_find("test");
+    const again: TablesInstance | null = await table_find("test");
 
     let aTable = ConvertJson.toTable(JSON.parse(again!.get("table")));
     console.log(aTable);
