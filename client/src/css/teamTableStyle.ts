@@ -1,13 +1,11 @@
-import ITable from '../interfaces/ITable';
-
-export const blueTeamStyle: ITable["table"] = {
+export const blueTeamStyle = {
   id: "blue",
-  style: "table text-primary border border-primary",
+  table: "table text-primary border border-primary",
   team: "BLUE"
 };
 
-export const redTeamStyle: ITable["table"] = {
+export const redTeamStyle = {
   id: "red",
-  style: "table text-danger border border-danger",
+  table: "table text-danger border border-danger",
   team: "RED"
 };

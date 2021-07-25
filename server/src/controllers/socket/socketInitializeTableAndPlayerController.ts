@@ -6,6 +6,8 @@ import ConvertJson from "../../models/utils/convertJson";
 // interface
 import TablesInstance from "../../interfaces/schema/Tables";
 // query
+import { roomId_find, roomId_insert } from "../queries/RoomIdsQuery";
+
 import { table_find, table_insert, table_update } from '../queries/TablesQuery'
 import { player_insert } from "../queries/PlayersQuery";
 import PlayersInstance from "../../interfaces/schema/Players";
@@ -16,10 +18,8 @@ const socketInitializeTableAndPlayerController = (io: any, socket: Socket) => {
     let table: Table = new Table();
     let player: Operative = new Operative(playerName, playerId, "OPERATIVE", "NO TEAM");
     if (tableData) table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
-
     table.addPlayer(player);
     table.addPlayerToTeam(player);
-
     // store a player data
     try {
       const result: PlayersInstance | null = await player_insert(playerId, roomId, JSON.stringify(player));
@@ -30,7 +30,15 @@ const socketInitializeTableAndPlayerController = (io: any, socket: Socket) => {
     }
 
     // If table already exsits, update it. if not, store it.
-    if (tableData) await table_update(roomId, JSON.stringify(table));
+    if (tableData) {
+      try {
+        const result = await table_update(roomId, JSON.stringify(table));
+
+        if (!result) throw Error("fail");
+      } catch (err) {
+        console.log(err);
+      }
+    }
     else await table_insert(roomId, JSON.stringify(table));
 
     io.of("/game").in(roomId).emit("receive-table", JSON.stringify(table));

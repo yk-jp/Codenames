@@ -16,7 +16,6 @@ import { roomId_delete } from "../queries/RoomIdsQuery";
 const socketJoinRoomController = (io: any, socket: Socket): void => {
   socket.once("join-room", (roomId: string) => {
     socket.join(roomId);
-    if(socket.rooms.size == 0) console.log("joined",{"roomId":roomId});
   });
 
   socket.once("leave-room", async (roomId: string, playerId: string) => {

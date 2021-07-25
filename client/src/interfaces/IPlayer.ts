@@ -1,7 +1,6 @@
-export default interface Player {
-  player: { 
-    name:string,
-    id:string,
-    team:string
-  }
+export default interface IPlayer {
+  name: string;
+  id: string;
+  role: string;
+  team: string;
 }
