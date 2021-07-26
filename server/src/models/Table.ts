@@ -99,7 +99,7 @@ export default class Table {
    even:get player in the blue team.
   */
   public setTeam(player: Player): void {
-    const team: string = this.players.length % 2 ? "RED" : "BLUE";
+    let team: string = this.blueTeam.getTeamMembers().length > this.redTeam.getTeamMembers().length ? "RED" : "BLUE";
     player.setTeam(team);
   }
 

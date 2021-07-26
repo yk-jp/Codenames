@@ -49,7 +49,8 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
 
       // send table data to other players 
       io.of("/game").to(roomId).emit("receive-table", JSON.stringify(table));
-
+      // delete session of the player kicked out of the game
+      io.of("/game").to(roomId).emit("delete-session", playerId);
       // update table
       const updateResult = await table_update(roomId, JSON.stringify(table));
       if (!updateResult) throw Error("could not update table");
