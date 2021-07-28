@@ -9,8 +9,8 @@ export const player_findAll = (roomId: string) => {
 }
 
 // when player connected the room
-export const player_insert = (id: string, roomId: string, player: string) => {
-  return Player.create({ id: id, roomId: roomId, player: player })
+export const player_insert = (id: string, roomId: string, socketId: string, player: string) => {
+  return Player.create({ id: id, roomId: roomId, socketId: socketId, player: player })
 }
 
 // when player disconnected the room
@@ -21,6 +21,11 @@ export const player_delete = (id: string) => {
 export const player_update = (player: string, id: string) => {
   return Player.update({ player: player }, { where: { id: id } });
 }
+
+export const player_socketId_update = (id: string, socketId: string) => {
+  return Player.update({ socketId: socketId }, { where: { id: id } });
+}
+
 
 
 

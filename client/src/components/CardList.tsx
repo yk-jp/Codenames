@@ -1,4 +1,4 @@
-import { FC,useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // interfaces
 import ICard from '../interfaces/ICard';
@@ -12,6 +12,13 @@ const CardList: FC<ICard[]> = (cards, key): JSX.Element => {
   const socket = useContext(SocketContext);
   const { tableData, playerData } = useContext(GameDataContext);
   let cardList: JSX.Element[] = [];
+
+  useEffect(() => {
+
+
+
+
+  }, [])
 
   const color = {
     "ASSASIN": { text: "text-dark", bg: ["bg-dark", "disabled", "stopHover"] },

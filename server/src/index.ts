@@ -57,17 +57,17 @@ const gameIO = io.of("/game");
 gameIO.on("connection", (socket: Socket) => {
   console.log("connected in game page");
   // roomId controller
-  socketRoomIdController(io, socket);
+  socketRoomIdController(gameIO, socket);
   // join room controller
-  socketJoinAndLeaveRoomController(io, socket);
+  socketJoinAndLeaveRoomController(gameIO, socket);
   // initialize for table and player
-  socketInitializeTableAndPlayerController(io, socket);
+  socketInitializeTableAndPlayerController(gameIO, socket);
   //table controller
-  socketTableController(io, socket);
+  socketTableController(gameIO, socket);
   // player controller
-  socketPlayerController(io, socket);
+  socketPlayerController(gameIO, socket);
   // disconnection controller
-  socketDisconnectionController(io, socket);
+  socketDisconnectionController(gameIO, socket);
 });
 
 server.listen(port, () => {

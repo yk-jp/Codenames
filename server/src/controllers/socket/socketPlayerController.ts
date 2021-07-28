@@ -1,4 +1,4 @@
-import {Socket} from "socket.io";
+import { Socket } from "socket.io";
 // model
 import Operative from "../../models/Operative";
 import Spymaster from "../../models/Spymaster";
@@ -13,6 +13,7 @@ const socketPlayerController = (io: any, socket: Socket): void => {
       const playerData: PlayersInstance | null = await player_find(playerId);
       if (!playerData) throw new Error("player was not found");
       const player: Spymaster | Operative = ConvertJson.toPlayer(JSON.parse(playerData.get("player")));
+
       socket.emit("receive-player", JSON.stringify(player));
     } catch (err) {
       console.log(err);

@@ -16,20 +16,27 @@ const App: FC = () => {
     <Router>
       <div className="App">
         <Title />
-        <SocketProvider>
-          <GameDataProvider>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          {/* <Route exact path="/form" component={NameForm} /> */}
+          <Route exact path="/form">
             <LocationHistoryProvider>
-              <Switch>
-                <Route exact path="/" component={Home} />
-                <Route exact path="/form" component={NameForm} />
-                <Route path="/game/:roomId" component={Game} />
-                <Route path="*" component={NotFound} />
-              </Switch>
+              <NameForm />
             </LocationHistoryProvider>
-          </GameDataProvider>
-        </SocketProvider>
+          </Route>
+          <Route path="/game/:roomId">
+            <LocationHistoryProvider>
+              <GameDataProvider>
+                <SocketProvider>
+                  <Game />
+                </SocketProvider>
+              </GameDataProvider>
+            </LocationHistoryProvider>
+          </Route>
+          <Route path="*" component={NotFound} />
+        </Switch>
       </div>
-    </Router>
+    </Router >
   );
 }
 
