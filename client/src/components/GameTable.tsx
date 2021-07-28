@@ -2,7 +2,8 @@ import { FC, useEffect, useContext } from 'react';
 //components
 import TeamTable from './TeamTable';
 import CardList from './CardList';
-import Pulldown from './Pulldown';
+import Clue from './Clue';
+import EndGuess from './EndGuess';
 // hook
 import sliceWordList from '../hooks/sliceWordList';
 import copyInputData from '../hooks/copyInputData';
@@ -20,11 +21,6 @@ const GameTable: FC = (): JSX.Element => {
   // data from localstorage
   const playerName: string = sessionStorage.getItem("playerName") as string;
   const playerId: string = sessionStorage.getItem("playerId") as string;
-
-  useEffect(() => {
-
-
-  }, []);
 
   return (
     <div className="container-fluid">
@@ -49,18 +45,19 @@ const GameTable: FC = (): JSX.Element => {
               return <CardList {...fiveCards} key={key} />;
             })}
 
-            {/* give a clue button */}
-            <div className="container mt-3">
-              <div className="row flex-nowrap justify-content-center">
-                <input className="col-6 col-md-4" type="text" placeholder="ENTER A WORD" />
-                <Pulldown />
-                <button type="button" className="btn btn-outline-success col-4 col-md-2 text-nowrap">SEND</button>
-              </div>
+            {/* spymaster or operative */}
+            <div className="form-check form-switch container mx-3 d-flex justify-content-end">
+              <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+              <label className="form-check-label mx-2" htmlFor="flexSwitchCheckDefault">SPYMASTER</label>
             </div>
+            {/* give a clue button */}
+            <Clue />
+            {/* end guess button */}
+            <EndGuess />
           </div>
         </div>
-        {/* playerTable */}
         <div className="col w-100 mt-3 mt-md-5 p-0">
+          {/* playerTable */}
           <div className="row justify-content-center">
             <div className="col-5 col-md p-0 mx-1">
               <TeamTable style={blueTeamStyle} />
@@ -68,6 +65,11 @@ const GameTable: FC = (): JSX.Element => {
             <div className="col-5 col-md p-0 mx-1">
               <TeamTable style={redTeamStyle} />
             </div>
+          </div>
+          {/* log */}
+          <div id="log" className="form-group col-12">
+            <div className="dummy vh-30"></div>
+            <textarea className="form-control resize-none bg-white p-0 log" id="comment" value="test sentences" readOnly></textarea>
           </div>
         </div>
       </div>

@@ -1,30 +1,28 @@
 import { FC, useState, useEffect, useContext } from 'react';
+import { Socket } from "socket.io-client";
+// component
 import GameTable from './GameTable';
 import Loading from './Loading';
 //context
 import { LocationContext } from '../context/LocationHistoryContext';
 import { SocketContext } from '../context/SocketContext';
 import { GameDataContext } from '../context/GameDataContext';
-import { io, Socket } from "socket.io-client";
-import config from '../config/config';
+
 const Game: FC = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const roomId: string = window.location.pathname.split("/").pop() as string;
   // context
   const locationHistory = useContext(LocationContext);
-  let socket: Socket = useContext(SocketContext);
-  socket = io(config.server.game, {
-    autoConnect: false,
-    withCredentials: true
-  });
+  const socket:Socket = useContext(SocketContext);
+
   const { tableData, playerData } = useContext(GameDataContext);
   // data from localstorage
   const playerName: string = sessionStorage.getItem("playerName") as string;
   const playerId: string = sessionStorage.getItem("playerId") as string;
   const isAlreadyInitialized: string | null = sessionStorage.getItem("isAlreadyInitialized") as string;
 
-  const disconnectionHandler = () => {
+  const disconnectionHandler = (playerId: string) => {
     socket.emit("leave-room", roomId, playerId);
     socket.off();
     socket.close();
@@ -40,12 +38,14 @@ const Game: FC = (): JSX.Element => {
     } else {
       setIsLoggedIn(true);
 
-      // If log in was successfully done, connect to the backend with socket  
+      // If log in was successfully done, connect to the backend with socket        
       socket.connect();
+      // update socket and share it to other child components
+      console.log(socket);
       // roomId
       socket.emit("store-roomId", roomId);
       // join room
-      socket.emit("join-room", roomId);
+      socket.emit("join-room", roomId, playerId);
       if (!isAlreadyInitialized) {
         // initialize
         socket.emit("initialize-table-and-player", roomId, playerName, playerId);
@@ -69,14 +69,20 @@ const Game: FC = (): JSX.Element => {
         playerData.setPlayer(JSON.parse(player));
       });
 
+      socket.on("delete-session", (kickedOutPlayerId: string) => {
+        console.log(kickedOutPlayerId);
+        sessionStorage.clear();
+      });
+
       socket.on("disconnect", () => {
         // when disconnecting
-        disconnectionHandler();
+        disconnectionHandler(playerId);
       });
     }
 
     return () => {
-      disconnectionHandler();
+      // when going to another page.
+      disconnectionHandler(playerId);
     }
   }, []);
 

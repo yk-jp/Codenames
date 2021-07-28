@@ -16,9 +16,8 @@ const RoomIds = db.define<RoomIdsInstance>('RoomIds', {
 },
   {
     tableName: 'roomIds',
-    timestamps:false
-    // updatedAt:false,
-    // createdAt:true//use it for scheduling jobs
+    updatedAt:false,
+    createdAt:true//use it for scheduling jobs
   });
 
 /*
