@@ -4,9 +4,13 @@ import Card from './Card';
 import Player from './Player';
 import Operative from './Operative';
 //interface
-import IGamePhase from '../interfaces/GamePhase';
+import IGamePhase from '../interfaces/IGamePhase';
+import IGameStatus from '../interfaces/IGameStatus';
 import IClue from '../interfaces/IClue';
 import IPlayer from '../interfaces/IPlayer';
+import WordsInstance from '../interfaces/schema/Words';
+
+
 /*
   RED's TURN 
       1.spymaster 
@@ -25,24 +29,33 @@ import IPlayer from '../interfaces/IPlayer';
 */
 
 export default class Table {
-  private static PHASE: IGamePhase = {
+  public static PHASE: IGamePhase = {
     "RED's TURN": "BLUE's TURN",
     "BLUE's TURN": "RED's TURN",
     "RED WON": "RED WON",
     "BLUE WON": "BLUE WON"
   };
+
+  public static GAMESTATUS: IGameStatus = {
+    "START": "PLAYING",
+    "PLAYING": "END",
+    "END": "START"
+  }
+
+  public static TEAMS: string[] = ["RED", "BLUE", "BYSTANDER", "ASSASIN"];
+
   private phase: string;
   private players: Player[]; //all team members
-
   public redTeam: Team;
   public blueTeam: Team;
+  public status: string;
   public cards: Card[];
-
   constructor() {
     this.players = []; //no players unless somebody log in to Lobby
     this.redTeam = new Team("RED");
     this.blueTeam = new Team("BLUE");
     this.phase = "RED's TURN";
+    this.status = "START";
     this.cards = Array(25).fill(new Card("NO TEAM", ""));
   }
 
@@ -88,6 +101,20 @@ export default class Table {
     }
   }
 
+  public updateCards(wordsData: WordsInstance[]): void {
+    let cards: Card[] = [];
+
+    // create Cards
+    wordsData?.map((wordData, i) => {
+      if (i == wordsData!.length - 2 || i == wordsData!.length - 3) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 2], wordData.word));
+      else if (i == wordsData!.length - 1) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 1], wordData.word));
+      else cards.push(new Card(Table.TEAMS[i % 3], wordData.word));
+    });
+
+    // shuffle and update cards
+    this.cards = this.shuffleData(cards) as Card[];
+  }
+
   /*
    The game can't be started unless both teams don't set up their spymaster
   */
@@ -101,6 +128,33 @@ export default class Table {
   public setTeam(player: Player): void {
     let team: string = this.blueTeam.getTeamMembers().length > this.redTeam.getTeamMembers().length ? "RED" : "BLUE";
     player.setTeam(team);
+  }
+
+  public shuffleMembers(): void {
+    // initialize members
+    this.redTeam.resetTeamMembers();
+    this.blueTeam.resetTeamMembers();
+    this.shuffleData(this.players);
+    this.players.map(player => {
+      this.addPlayerToTeam(player);
+    });
+  }
+
+  /*
+    shuffle card or players
+  */
+  public shuffleData(data: Player[] | Card[]): Player[] | Card[] {
+    /*shuffle cards before setting them to table
+     fisher algorithm
+     Math.random() * (max - min) + min
+   */
+    for (let i = 0; i < data.length; i++) {
+      let rand = Math.floor(Math.random() * (data.length - i));
+      let temp = data[i];
+      data[i] = data[rand];
+      data[rand] = temp;
+    }
+    return data;
   }
 
   public deletePlayerFromPlayers(player: IPlayer): Player {
@@ -153,6 +207,14 @@ export default class Table {
 
   public setGamePhase(phase: string): void {
     this.phase = phase;
+  }
+
+  public getGameStatus(): string {
+    return this.status;
+  }
+
+  public setGameStatus(status: string): void {
+    this.status = status;
   }
 
   //to switch gamephase

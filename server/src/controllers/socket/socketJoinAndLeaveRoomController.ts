@@ -39,7 +39,7 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
 
       // delete session of the player kicked out of the game
       const socketId: string = playerData.get("socketId");
-      io.to(socketId).emit("delete-session", playerId);
+      io.to(socketId).emit("delete-session");
       // delete player data from db
       await player_delete(playerId);
 

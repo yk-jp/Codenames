@@ -6,6 +6,8 @@ import ConvertJson from "../../models/utils/convertJson";
 import PlayersInstance from "../../interfaces/schema/Players";
 // query
 import { player_find } from "../../controllers/queries/PlayersQuery";
+//interface
+import IOperative from "../../interfaces/IOperative";
 
 const socketPlayerController = (io: any, socket: Socket): void => {
   socket.on("receive-player", async (playerId: string) => {
@@ -18,7 +20,18 @@ const socketPlayerController = (io: any, socket: Socket): void => {
     } catch (err) {
       console.log(err);
     }
-  })
+  });
+
+  socket.on("activate-spymaster", async (playerString: string, roomId: string) => {
+    const player: IOperative = JSON.parse(playerString);
+    const team: string = (player.team === "RED") ? "RED" : "BLUE";
+    socket.to(roomId).emit("activate-spymaster", team);
+  });
+
+  socket.on("set-spymaster", async () => {
+
+
+  });
 }
 
 export default socketPlayerController;

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import http from "http";
 import config from './config/config';
 import cors from 'cors';
@@ -17,6 +17,7 @@ import nameFormRoutes from './Routes/nameFormRoutes';
 import { db_synchronization } from "./config/db_synchronization";
 // scheduling jobs
 import { cronJobs } from "./controllers/cronJobs/cronJobs";
+import { restart } from "nodemon";
 const app = express();
 const port = config.server.port || "3001";
 const host = config.server.host || "localhost";

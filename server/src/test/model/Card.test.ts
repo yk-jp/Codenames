@@ -1,4 +1,4 @@
-import { words_find, word_insert } from "../../controllers/queries/wordsQuery";
+import { words_findAll, word_insert } from "../../controllers/queries/wordsQuery";
 import WordsInstance from "../../interfaces/schema/Words";
 import Card from "../../models/Card";
 
@@ -11,7 +11,7 @@ const teams: string[] = ['RED', 'BLUE', 'BYSTANDER', 'ASSASIN'];
 describe("words query", () => {
 
   beforeAll(async () => {
-    wordsData = await words_find(language[0]);
+    wordsData = await words_findAll(language[0]);
     words = wordsData.map(wordData => wordData.word);
     languages = wordsData.map(wordData => wordData.language);
   });
@@ -28,7 +28,7 @@ describe("words query", () => {
 
 describe("card class", () => {
   beforeAll(async () => {
-    wordsData = await words_find(language[0]);
+    wordsData = await words_findAll(language[0]);
     words = wordsData.map(wordData => wordData.word);
     languages = wordsData.map(wordData => wordData.language);
   });
