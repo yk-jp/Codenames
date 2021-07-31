@@ -8,6 +8,7 @@ export default interface ITable {
   redTeam:ITeam;
   blueTeam:ITeam;
   phase:string;
+  status:string;
   cards:ICard[];
 }
 

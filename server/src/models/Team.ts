@@ -91,6 +91,10 @@ export default class Team {
     return this.teamMembers;
   }
 
+  public resetTeamMembers(): void {
+    this.teamMembers = [];
+  }
+
   public setTeamMembers(players: Player | Player[]): void {
     if (Array.isArray(players)) this.teamMembers = players; // If players is array,
     else this.teamMembers.push(players);

@@ -14,7 +14,7 @@ const Game: FC = (): JSX.Element => {
   const roomId: string = window.location.pathname.split("/").pop() as string;
   // context
   const locationHistory = useContext(LocationContext);
-  const socket:Socket = useContext(SocketContext);
+  const socket: Socket = useContext(SocketContext);
 
   const { tableData, playerData } = useContext(GameDataContext);
   // data from localstorage
@@ -40,8 +40,7 @@ const Game: FC = (): JSX.Element => {
 
       // If log in was successfully done, connect to the backend with socket        
       socket.connect();
-      // update socket and share it to other child components
-      console.log(socket);
+
       // roomId
       socket.emit("store-roomId", roomId);
       // join room
@@ -69,8 +68,7 @@ const Game: FC = (): JSX.Element => {
         playerData.setPlayer(JSON.parse(player));
       });
 
-      socket.on("delete-session", (kickedOutPlayerId: string) => {
-        console.log(kickedOutPlayerId);
+      socket.on("delete-session", () => {
         sessionStorage.clear();
       });
 
@@ -85,6 +83,10 @@ const Game: FC = (): JSX.Element => {
       disconnectionHandler(playerId);
     }
   }, []);
+
+  useEffect(()=> { 
+
+  });
 
   return (
     <>

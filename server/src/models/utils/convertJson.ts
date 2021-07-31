@@ -20,6 +20,7 @@ export default class ConvertJson {
     convertedData.redTeam = this.toTeam(table.redTeam);
     convertedData.blueTeam = this.toTeam(table.blueTeam);
     convertedData.setGamePhase(table.phase);
+    convertedData.setGameStatus(table.status);
     convertedData.cards = this.toCards(table.cards);
     return convertedData;
   }

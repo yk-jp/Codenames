@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-export const postDataForForm = (data: string, URI: string) => {
+export const postDataForForm = (playerName: string, roomId: string, URI: string) => {
   return axios.post(URI, {
-    playerName: data
+    playerName: playerName,
+    roomId: roomId
   },
     { withCredentials: true }
   )

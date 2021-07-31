@@ -1,0 +1,1 @@
+export const cardLanguage: string[] = ["jp", "en"];

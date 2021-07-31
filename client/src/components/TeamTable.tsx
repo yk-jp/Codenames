@@ -16,7 +16,7 @@ const TeamTable: FC<any> = ({ style }): JSX.Element => {
   const team: ITeam = style.team === "RED" ? tableData.table.redTeam : tableData.table.blueTeam;
   const kickPlayer = (socket: Socket, roomId: string, player: ISpymaster | IOperative) => {
     if (player.id === myId) return; //If the id clicked by player is own id, do nothing.
-    if (window.confirm(`kick ${player.name} out of this game?`)) {
+    if (window.confirm(`KICK ${player.name} OUT OF THIS GAME?`)) {
       socket.emit("leave-room", roomId, player.id);
     }
   };

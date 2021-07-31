@@ -3,7 +3,7 @@ import Words from '../../models/schema/Words';
 import { Sequelize } from "sequelize";
 import WordsInstance from '../../interfaces/schema/Words';
 
-export const words_find = async (language: string) => {
+export const words_findAll = async (language: string) => {
   return await Words.findAll({ order: Sequelize.literal('rand()'), limit: 25, raw: true, where: { language: language } });
 }
 
