@@ -2,12 +2,13 @@ import { Socket } from "socket.io";
 // model
 import Operative from "../../models/Operative";
 import Spymaster from "../../models/Spymaster";
+import Table from "../../models/Table";
 import ConvertJson from "../../models/utils/convertJson";
 import PlayersInstance from "../../interfaces/schema/Players";
+import TablesInstance from "../../interfaces/schema/Tables";
 // query
-import { player_find } from "../../controllers/queries/PlayersQuery";
-//interface
-import IOperative from "../../interfaces/IOperative";
+import { player_find, player_update } from "../../controllers/queries/PlayersQuery";
+import { table_find, table_update } from "../queries/TablesQuery";
 
 const socketPlayerController = (io: any, socket: Socket): void => {
   socket.on("receive-player", async (playerId: string) => {
@@ -22,15 +23,35 @@ const socketPlayerController = (io: any, socket: Socket): void => {
     }
   });
 
-  socket.on("activate-spymaster", async (playerString: string, roomId: string) => {
-    const player: IOperative = JSON.parse(playerString);
-    const team: string = (player.team === "RED") ? "RED" : "BLUE";
-    socket.to(roomId).emit("activate-spymaster", team);
-  });
+  socket.on("activate-spymaster", async (playerId: string, roomId: string) => {
+    try {
+      const tableData: TablesInstance | null = await table_find(roomId);
+      const playerData: PlayersInstance | null = await player_find(playerId);
+      if (!tableData) throw new Error("table was not found");
+      if (!playerData) throw new Error("player was not found");
+      const table: Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
+      // create instance of spymaster
+      const player: Operative = ConvertJson.toPlayer(JSON.parse(playerData.get("player")));
+      // set spymaster
+      const spymaster: Spymaster = new Spymaster(player.getName(), player.getId(), "SPYMASTER", player.getTeam());
 
-  socket.on("set-spymaster", async () => {
+      // other players become operative and they are in operatives list
+      if (player.getTeam() === "RED") table.redTeam.dividePlayers(spymaster);
+      else table.blueTeam.dividePlayers(spymaster);
 
+      io.in(roomId).emit("activate-spymaster", spymaster.getTeam());
+      socket.emit("receive-player", JSON.stringify(spymaster));
 
+      io.in(roomId).emit("receive-table", JSON.stringify(table));
+
+      // update table
+      await table_update(roomId, JSON.stringify(table));
+      //  update player
+      await player_update(JSON.stringify(spymaster), playerId);
+
+    } catch (err) {
+      console.log(err);
+    }
   });
 }
 

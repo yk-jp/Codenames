@@ -84,14 +84,14 @@ const Game: FC = (): JSX.Element => {
     }
   }, []);
 
-  useEffect(()=> { 
+  useEffect(() => {
 
   });
 
   return (
     <>
       {(isLoading || !isLoggedIn) && <Loading />}
-      {tableData.table && <GameTable />}
+      {(tableData.table && playerData.player) && <GameTable />}
     </>
   );
 };

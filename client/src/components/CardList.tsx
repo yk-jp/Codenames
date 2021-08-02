@@ -1,68 +1,61 @@
-import { FC, useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // interfaces
 import ICard from '../interfaces/ICard';
-
+import ICardColor from '../interfaces/ICardColor';
 // context
 import { SocketContext } from '../context/SocketContext';
 import { GameDataContext } from '../context/GameDataContext';
-
-const CardList: FC<ICard[]> = (cards, key): JSX.Element => {
+// css module
+import { cardStyleForOperative, cardStyleForSpymaster, clickedCardStyleForSpymasterAndOperative } from "../css/cardStyle";
+const CardList = (cards: ICard[], key: number): JSX.Element => {
   // context
   const socket = useContext(SocketContext);
   const { tableData, playerData } = useContext(GameDataContext);
   let cardList: JSX.Element[] = [];
+  const cardColor = (card: ICard): ICardColor => {
+    let color: ICardColor;
+    if (playerData.player.role === "OPERATIVE") {
+      // operative
+      if (card.isClicked) color = clickedCardStyleForSpymasterAndOperative[card.team];
+      else color = cardStyleForOperative[card.team];
+    } else {
+      // spymaster
+      if (card.isClicked) color = clickedCardStyleForSpymasterAndOperative[card.team];
+      else color = cardStyleForSpymaster[card.team];
+    }
 
-  useEffect(() => {
-
-
-
-
-  }, [])
-
-  const color = {
-    "ASSASIN": { text: "text-dark", bg: ["bg-dark", "disabled", "stopHover"] },
-    "BYSTANDER": { text: "text-success", bg: ["bg-success", "disabled", "stopHover"] },
-    "RED": { text: "text-danger", bg: ["bg-danger", "disabled", "stopHover"] },
-    "BLUE": { text: "text-primary", bg: ["bg-primary", "disabled", "stopHover"] }
-  }
-  for (const index in cards) {
-    let currCard = cards[index];
-    let Ele =
-      <div id={`card-${currCard.word}`} className={`card col p-0 d-flex justify-content-center`} key={uuidv4()} >
-        <h6 id={`text-${currCard.word}`} className={`m-auto`}>{currCard.word}</h6>
-      </div>;
-    cardList.push(Ele);
-  }
-
-  const textColorAfterEvent: string = "text-white";
-
-  let operative = "OPERATIVE";
-  let spymaster = "SPYMASTER";
-
-  const eventForclickedCard = (card) => {
-    changeBg(card, color[card["team"]].bg);
-    changeText(card, textColorAfterEvent);
+    return color;
   };
 
-  const changeBg = (card, color) => {
-    const div = document.querySelector(`#card${card["id"]}`)!;
-    div.classList.add(...color);
+  const cardClicked = (card: ICard) => {
+    if (playerData.player.role === "SPYMASTER") return;
+    else {
+      if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING")) {
+        socket.emit("click-card", card);
+      }
+    }
   }
 
-  const changeText = (card, color) => {
-    const text = document.querySelector(`#text${card["id"]}`)!;
-    text.classList.add(color);
+  for (const index in cards) {
+    let currCard = cards[index];
+    const color: ICardColor = cardColor(currCard);
+    let ele: JSX.Element =
+      <div id={`card-${currCard.word}`} className={`card col p-0 d-flex justify-content-center ${color!.bg}`} key={uuidv4()} onClick={() => cardClicked(currCard)}>
+        <h6 id={`text-${currCard.word}`} className={`m-auto ${color!.text}`}>{currCard.word}</h6>
+      </div>;
+    cardList.push(ele);
   }
 
   return (
-    <>{cardList != [] &&
-      < div className="w-100 container" >
-        <div className="row flex-nowrap">
-          {cardList}
-        </div>
-      </div >
-    }
+    <>
+      {cardList != [] &&
+        < div className="w-100 container">
+          <div className="row flex-nowrap">
+            {cardList}
+          </div>
+        </div >
+      }
     </>
   );
 }

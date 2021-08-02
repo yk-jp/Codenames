@@ -1,6 +1,3 @@
-import IPlayer from "../interfaces/IPlayer";
-import Operative from "./Operative";
-import Spymaster from "./Spymaster";
 export default abstract class Player {
   protected name: string;
   protected id: string; //playerId

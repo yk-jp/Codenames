@@ -5,6 +5,7 @@ import Operative from './Operative';
 // interface 
 import TeamPhase from '../interfaces/ITeamPhase';
 import IPlayer from '../interfaces/IPlayer';
+import IClue from '../interfaces/IClue';
 export default class Team {
   private guessCount: number; //spymaster gives a clue and the team keeps the count that they can guess.
   private cardsRemaining: number;
@@ -29,9 +30,27 @@ export default class Team {
     this.cardsRemaining = this.name == "RED" ? 8 : 7; //red:8, blue:7
   }
 
-  // spymaster or operatives
-  public giveRoles(): void {
+  /*  
+    receive player id of the player who will become a spymaster and divide players
+  */
+  public dividePlayers(player: Spymaster) {
+    const id: string = player.getId();
+    this.teamMembers.map(member => {
+      if (member.getId() === player.getId()) {
+        // don't update the player in teamMember.   
+        this.setSpymaster(player);
+      } else {
+        this.operatives.push(member);
+      }
+    });
+  };
 
+  public resetTeam(): void {
+    this.phase = this.name === "RED" ? "GIVING A CLUE" : "WAITING FOR TURN";
+    this.spymaster = null;
+    this.operatives = [];
+    this.guessCount = -1;
+    this.cardsRemaining = this.name == "RED" ? 8 : 7;
   }
 
   /* ※ When it's applicable to folloing 1 to 3, this.guessCount should be 1, executing resetGuessCount() in advance.
@@ -47,15 +66,19 @@ export default class Team {
     return this.guessCount;
   }
 
+  public isTeamWon(): boolean {
+    return this.cardsRemaining <= 0
+  }
+
   /*
     receive a number as string 
 
     1～9　→　convert it to number type
       ∞  →　convert it to infinity
   */
-  public setGuessCount(number: string): void {
-    if (number == "∞") this.guessCount = Infinity;
-    else this.guessCount = parseInt(number) + 1;
+  public setGuessCount(clue: IClue): void {
+    if (clue.number == "∞") this.guessCount = Infinity;
+    else this.guessCount = parseInt(clue.number) + 1;
   }
 
   public setGuessCountForJSON(number: string): void {
@@ -65,6 +88,14 @@ export default class Team {
 
   public resetGuessCount(): void {
     this.guessCount = -1;
+  }
+
+  public decreaseGuessCount(): void {
+    this.guessCount -= 1;
+  }
+
+  public decreaseCardsRemaining(): void {
+
   }
 
   public getCardsRemaining(): number {
@@ -103,7 +134,7 @@ export default class Team {
   public deleteTeamMember(player: IPlayer): Spymaster | Operative {
     const deletedPlayer: Spymaster | Operative = this.deleteMemberFromTeamMembers(player);
     if (player.role === "OPERATIVE") this.deleteOperative(player);
-    else this.deleteOperative(player);
+    else this.deleteSpymaster(player);
 
     return deletedPlayer;
   }
@@ -140,6 +171,10 @@ export default class Team {
     else this.operatives.push(...operative);
   }
 
+  public getOperatives(): Operative[] {
+    return this.operatives;
+  }
+
   public getSpymaster(): Spymaster | null {
     if (!this.spymaster) return null;
     return this.spymaster;
@@ -157,5 +192,4 @@ export default class Team {
     });
     return playerAt;
   }
-
 }
