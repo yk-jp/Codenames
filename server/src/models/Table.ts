@@ -3,14 +3,15 @@ import Team from './Team';
 import Card from './Card';
 import Player from './Player';
 import Operative from './Operative';
+import Spymaster from './Spymaster';
 //interface
 import IGamePhase from '../interfaces/IGamePhase';
 import IGameStatus from '../interfaces/IGameStatus';
 import IClue from '../interfaces/IClue';
 import IPlayer from '../interfaces/IPlayer';
 import WordsInstance from '../interfaces/schema/Words';
-
-
+import ICard from '../interfaces/ICard';
+import { isJSDocReturnTag } from 'typescript';
 /*
   RED's TURN 
       1.spymaster 
@@ -56,49 +57,122 @@ export default class Table {
     this.blueTeam = new Team("BLUE");
     this.phase = "RED's TURN";
     this.status = "START";
-    this.cards = Array(25).fill(new Card("NO TEAM", ""));
+    this.cards = Array(25).fill(new Card("NO TEAM", "", false));
   }
 
-  public haveTurn(inputData: IClue) {
-    if (this.phase == "RED's TURN") {
-      // RED's TURN
-      if (this.redTeam.getPhase() == "GIVING A CLUE") {
+  public haveTurn(inputData?: IClue | string | Card) {
+    if (this.isGameFinished()) return; //If game finished,
 
-        if (inputData) {
-          //set a clue from the spymaster 
-          this.redTeam.getSpymaster()!.setClue(inputData);
-          // go to the next action
-          this.redTeam.changePhase();
+    const redTurn: boolean = this.isRedTurn();
+    const team: Team = redTurn ? this.redTeam : this.blueTeam;
+    if (team.getPhase() == "GIVING A CLUE") {
+      // set guesscount
+      team.setGuessCount(inputData as IClue);
+      // go to the next action
+      team.changePhase();
+    } else if (team.getPhase() == "GUESSING") {
+      if (!team.isTurnEnd() || inputData !== "END GUESSING") {
+        // card judgement
+        this.cardJudgement(inputData as Card);
+
+        if (this.redTeam.isTeamWon() || this.blueTeam.isTeamWon()) {
+          //If the number of card remaining is 0, team won 
+          this.chanegGameStatus();
+          if (this.redTeam.isTeamWon()) this.changeGamePhase("RED");
+          else this.changeGamePhase("BLUE");
+          return;
         }
-      } else if (this.redTeam.getPhase() == "GUESSING") {
-
-        if (!this.redTeam.isTurnEnd()) {
-          // if() { 
-          //   // IsCorrectAnswer
-
-          // }
-        } else {
-          // go to the next action
-          this.redTeam.changePhase();
-        }
-
+      } else {
+        // go to the next action
+        team.changePhase();
+        // reset guess count
+        team.resetGuessCount();
+        // change turn
+        this.changeGamePhase();
       }
-
-    } else if (this.phase == "BLUE's TURN") {
-      // RED's TURN
-      if (this.blueTeam.getPhase() == "GIVING A CLUE") {
-        if (inputData) {
-          //set a clue from the spymaster 
-          this.redTeam.getSpymaster()!.setClue(inputData);
-          // go to the next action
-          this.redTeam.changePhase();
-        }
-      }
-      else {
-
-      }
-
     }
+  }
+
+  public cardJudgement(card: Card): void {
+    const team: string = this.isRedTurn() ? "RED" : "BLUE";
+    if (this.isRedTurn() && card.getTeam() === team) {
+      // correct answer
+      this.redTeam.decreaseCardsRemaining();
+      this.redTeam.decreaseGuessCount();
+    } else if (!this.isRedTurn() && card.getTeam() === "BLUE") {
+      // correct answer
+      this.blueTeam.decreaseCardsRemaining();
+      this.blueTeam.decreaseGuessCount();
+    } else if (this.isRedTurn() && card.getTeam() === "BLUE") {
+      /* wrong answer 
+         red team hit the blue card
+      */
+      this.changeGamePhase();
+      this.redTeam.resetGuessCount();
+      this.redTeam.changePhase();
+      this.blueTeam.changePhase();
+    } else if (!this.isRedTurn() && card.getTeam() === "RED") {
+      /* wrong answer 
+       blue team hit the blue card
+      */
+      this.changeGamePhase();
+      this.blueTeam.resetGuessCount();
+      this.blueTeam.changePhase();
+      this.redTeam.changePhase();
+    }
+    else if (card.getTeam() === "BYSTANDER") {
+      if (this.isRedTurn()) {
+        this.changeGamePhase();
+        this.redTeam.resetGuessCount();
+        this.redTeam.changePhase();
+        this.blueTeam.changePhase();
+      } else {
+        this.changeGamePhase();
+        this.blueTeam.resetGuessCount();
+        this.blueTeam.changePhase();
+        this.blueTeam.changePhase();
+      }
+    } else {
+      // assasin
+      if (this.isRedTurn()) {
+        this.blueTeam.resetGuessCount();
+      } else this.redTeam.resetGuessCount();
+      // all cards are clicked so that all players can see every answers
+      this.updateAllCard();
+      return;
+    }
+
+    // update isClicked of card 
+    this.updateCard(card);
+  }
+
+  public changeSpymastersToOperatives(): Operative[] {
+    let spymasters: Spymaster[] = [];
+    if (this.redTeam.getSpymaster()) spymasters.push(this.redTeam.getSpymaster()!);
+    if (this.blueTeam.getSpymaster()) spymasters.push(this.blueTeam.getSpymaster()!);
+    return spymasters.map(spymaster => {
+      return new Operative(spymaster.getName(), spymaster.getId(), "OPERATIVE", spymaster.getTeam());
+    });
+    ;
+  }
+
+  public resetTable(): void {
+    this.phase = "RED's TURN";
+    this.status = "START";
+    this.cards = Array(25).fill(new Card("NO TEAM", "", false));
+    this.redTeam.resetTeam();
+    this.blueTeam.resetTeam();
+  };
+
+  public updateCard(targetCard: Card): void {
+    this.cards.map((card) => {
+      if (card.getTeam() === targetCard.getTeam() && card.getWord() === targetCard.getWord()) card.setClicked();
+    });
+  }
+  public updateAllCard(): void {
+    this.cards.map((card) => {
+      card.setClicked();
+    });
   }
 
   public updateCards(wordsData: WordsInstance[]): void {
@@ -106,20 +180,43 @@ export default class Table {
 
     // create Cards
     wordsData?.map((wordData, i) => {
-      if (i == wordsData!.length - 2 || i == wordsData!.length - 3) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 2], wordData.word));
-      else if (i == wordsData!.length - 1) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 1], wordData.word));
-      else cards.push(new Card(Table.TEAMS[i % 3], wordData.word));
+      if (i == wordsData!.length - 2 || i == wordsData!.length - 3) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 2], wordData.word, false));
+      else if (i == wordsData!.length - 1) cards.push(new Card(Table.TEAMS[Table.TEAMS.length - 1], wordData.word, false));
+      else cards.push(new Card(Table.TEAMS[i % 3], wordData.word, false));
     });
 
     // shuffle and update cards
     this.cards = this.shuffleData(cards) as Card[];
+
+    //It's hard to swap the location of The card for assasin. execute the function focused on swaping it. 
+    this.cards = this.swapCardForAssasin();
   }
 
-  /*
-   The game can't be started unless both teams don't set up their spymaster
-  */
-  public IsSetSpymaster(): boolean {
-    return this.redTeam.getSpymaster() != null && this.blueTeam.getSpymaster() != null;
+  public swapCardForAssasin(): Card[] {
+    let assasinAt: number = 0;
+    this.cards.map((card, index) => {
+      if (card.getTeam() === Table.TEAMS[Table.TEAMS.length - 1]) assasinAt = index;
+    });
+    // in-place algorithm
+    //Math.random() * (max - min) + min
+    const rand: number = Math.floor(Math.random() * (this.cards.length - 1));
+    let temp = this.cards[assasinAt];
+    this.cards[assasinAt] = this.cards[rand];
+    this.cards[rand] = temp;
+    return this.cards;
+  };
+
+  public setGuessCountOfTeam(clue: IClue): void {
+    if (this.isRedTurn()) this.redTeam.setGuessCount(clue);
+    else this.blueTeam.setGuessCount(clue);
+  }
+
+  public isRedTurn(): boolean {
+    return (this.phase === "RED's TURN");
+  }
+
+  public isGameFinished(): boolean {
+    return this.status === "END";
   }
 
   /*odd: get player in the red Team 
@@ -149,7 +246,7 @@ export default class Table {
      Math.random() * (max - min) + min
    */
     for (let i = 0; i < data.length; i++) {
-      let rand = Math.floor(Math.random() * (data.length - i));
+      let rand: number = Math.floor(Math.random() * (data.length - i));
       let temp = data[i];
       data[i] = data[rand];
       data[rand] = temp;
@@ -217,9 +314,14 @@ export default class Table {
     this.status = status;
   }
 
+  public chanegGameStatus(): void {
+    this.status = Table.GAMESTATUS[this.status];
+  }
+
   //to switch gamephase
-  public changeGamePhase(): void {
-    this.phase = Table.PHASE[this.phase];
+  public changeGamePhase(team?: string): void {
+    if (team) this.phase = team === "RED" ? Table.PHASE["RED WON"] : Table.PHASE["BLUE WON"];
+    else this.phase = Table.PHASE[this.phase];
   }
 
   public getPlayers(): Player[] {

@@ -36,15 +36,15 @@ describe("card class", () => {
 
   test('allocate team to each card and shuffle them', async () => {
 
-    let cards: Card[] = Array(25).fill(new Card("NO TEAM", ""));
+    let cards: Card[] = Array(25).fill(new Card("NO TEAM", "",false));
 
     expect(cards.length).toBe(25);
 
     cards = [];
     wordsData?.map((wordData, i) => {
-      if (i == wordsData!.length - 2 || i == wordsData!.length - 3) cards.push(new Card(teams[teams.length - 2], wordData.word));
-      else if (i == wordsData!.length - 1) cards.push(new Card(teams[teams.length - 1], wordData.word));
-      else cards.push(new Card(teams[i % 3], wordData.word));
+      if (i == wordsData!.length - 2 || i == wordsData!.length - 3) cards.push(new Card(teams[teams.length - 2], wordData.word,false));
+      else if (i == wordsData!.length - 1) cards.push(new Card(teams[teams.length - 1], wordData.word,false));
+      else cards.push(new Card(teams[i % 3], wordData.word,false));
     });
 
     expect(cards.length).toBe(25);

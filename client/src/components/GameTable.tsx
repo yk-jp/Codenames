@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useContext, Dispatch, useRef, RefObject } from 'react';
+import { FC, useEffect, useState, useContext, useRef } from 'react';
 //components
 import TeamTable from './TeamTable';
 import CardList from './CardList';
@@ -14,10 +14,6 @@ import { GameDataContext } from '../context/GameDataContext';
 // css
 import { toggleStartGame, chnageStartGameText } from '../controllers/css/startGameStyleController';
 import { blueTeamStyle, redTeamStyle } from '../css/teamTableStyle';
-import { Socket } from 'dgram';
-// interface
-import IOperative from '../interfaces/IOperative';
-import ITable from '../interfaces/ITable';
 
 const GameTable: FC = (): JSX.Element => {
   const url: string = window.location.href;
@@ -26,8 +22,12 @@ const GameTable: FC = (): JSX.Element => {
   const { tableData, playerData } = useContext(GameDataContext);
   // useState
   const [startGameDisabled, setStartGameDisabled] = useState<boolean>(true);
+  const [isShuffleDisabled, setIsShuffleDisabled] = useState<boolean>(false);
+  const [isSpymasterDisabled, setIsSpymasterDisabled] = useState<boolean>(true);
+
   const [startGameText, setStartGameText] = useState<string>();
   const [isSpymasterActive, setIsSpymasterActive] = useState<boolean>(false);
+
   // useRef
   const cardLn = useRef<HTMLInputElement>(null);
   // data from localstorage
@@ -36,23 +36,34 @@ const GameTable: FC = (): JSX.Element => {
   const roomId: string = window.location.pathname.split("/").pop() as string;
   const language: string = sessionStorage.getItem("language") as string;
 
-  const activateSpymasterController = (e: React.ChangeEvent<HTMLInputElement>, socket: Socket, setIsSpymasterActive: Dispatch<boolean>, player: IOperative, roomId: string) => {
-    // if (e.target.checked) {
-    //   sessionStorage.setItem("isSpymaster", "true");
-    //   socket.emit("activate-spymaster", JSON.stringify(player), roomId);
-    //   setIsSpymasterActive(true);
-    // } else {
-    //   sessionStorage.setItem("isSpymaster", "false");
-    //   setIsSpymasterActive(false);
-    // };
+  const activateSpymasterController = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      sessionStorage.setItem("isSpymaster", "true");
+      socket.emit("activate-spymaster", playerId, roomId);
+      setIsSpymasterActive(true);
+    }
+  };
+
+  const disableSpymasterBtnController = () => {
+    if(tableData.table.phase !== "PLAYING") return;
+    if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE" && !tableData.table.redTeam.spymaster) || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE" && !tableData.table.blueTeam.spymaster)) {
+      setIsSpymasterDisabled(false);
+      console.log(tableData.table.redTeam.spymaster);
+    }
+    else setIsSpymasterDisabled(true);
+    console.log("run");
+  };
+
+  const shuffleStyleContoller = () => {
+    if (tableData.table.status !== "START") setIsShuffleDisabled(true);
   };
 
   const shuffleMembersController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (window.confirm("SHUFFLE MEMBERS ?")) socket.emit("shuffle-members", roomId);
     else e.preventDefault();
   }
-  const startGameController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, socket: Socket, table: ITable, roomId: string, cardLn: RefObject<HTMLInputElement>) => {
-    if (table.status == "START") {
+  const startGameController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (tableData.table.status == "START") {
       if (window.confirm("START GAME ?")) socket.emit("start-game", roomId, cardLn.current!.id);
       else e.preventDefault();
     } else {
@@ -68,19 +79,50 @@ const GameTable: FC = (): JSX.Element => {
     chnageStartGameText(tableData.table, setStartGameText);
     // spymaster toggle
     setIsSpymasterActive(isSpymaster);
+    // spymaster button enable or disable
+    disableSpymasterBtnController();
     // language option
     if (language) document.getElementById(language)!["checked"] = true;
-    socket.on("activate-spymaster", (team: string | null) => {
-      if (!team || playerData.player.team === team) {
-        sessionStorage.setItem("isSpymaster", "false");
-        setIsSpymasterActive(false);
+    // style for shuffle button 
+    shuffleStyleContoller();
+
+    socket.on("activate-spymaster", (team: string) => {
+      if (playerData.player.team === team) setIsSpymasterDisabled(true);
+    });
+
+    socket.on("click-card", () => {
+
+
+
+    });
+
+    socket.on("reset-spymaster", () => {
+      sessionStorage.removeItem("isSpymaster");
+      setIsSpymasterDisabled(true);
+      setIsSpymasterActive(false);
+    });
+
+    socket.on("alert-message", (message: string) => {
+      alert(message);
+    });
+
+    socket.on("alert-for-spymaster", (message: string) => {
+      if ((tableData.table.phase === "RED's TURN" && tableData.table.redTeam.phase == "GIVING A CLUE" && playerData.player.team === "RED") || (tableData.table.phase === "BLUE's TURN" && tableData.table.blueTeam.phase == "GIVING A CLUE" && playerData.player.team === "BLUE")) {
+        // enable players to hit the button
+        setIsSpymasterDisabled(false);
+        return alert(message);
       }
     });
 
     return () => {
       socket.off("activate-spymaster");
+      socket.off("clicked-card");
+      socket.off("alert-for-spymaster");
+      socket.off("click-card");
+      socket.off("alert-message");
+      socket.off("reset-spymaster");
     };
-  }, [tableData.table, playerData.player]);
+  }, []);
 
   return (
     <div className="container-fluid">
@@ -101,31 +143,35 @@ const GameTable: FC = (): JSX.Element => {
             </div>
 
             {/* 25 cards */}
-            {sliceWordList(tableData.table.cards).map((fiveCards, key) => {
+            {playerData.player && sliceWordList(tableData.table.cards).map((fiveCards, key) => {
               return <CardList {...fiveCards} key={key} />;
             })}
 
+            {JSON.stringify(tableData.table.phase)}
+            {JSON.stringify(tableData.table.redTeam.spymaster)}
+            {JSON.stringify(tableData.table.redTeam.phase)}
+            {JSON.stringify(tableData.table.blueTeam.phase)};
             {/* spymaster or operative */}
             <div className="form-check form-switch container d-flex justify-content-end">
               <div className="d-flex">
                 {/* jp or en */}
                 <CardLanguageRadio roomId={roomId} cardLn={cardLn} />
                 <div id="role">
-                  <input id="activate-spymaster" className="form-check-input" type="checkbox" onChange={(e) => { activateSpymasterController(e, socket, setIsSpymasterActive, playerData.player, roomId) }} checked={isSpymasterActive} />
+                  <input id="activate-spymaster" className="form-check-input" type="checkbox" onChange={(e) => { activateSpymasterController(e) }} checked={isSpymasterActive} disabled={isSpymasterDisabled} />
                   <label className="form-check-label mx-2" htmlFor="activate-spymaster" >SPYMASTER</label>
                 </div>
                 <div id="shuffle">
-                  <button type="button" className="btn btn-outline-success btn-sm h-20px mx-2" onClick={(e) => shuffleMembersController(e)}>SHUFFLE MEMBERS</button>
+                  <button type="button" className="btn btn-outline-success btn-sm h-20px mx-2" onClick={(e) => shuffleMembersController(e)} disabled={isShuffleDisabled}>SHUFFLE MEMBERS</button>
                 </div>
                 <div id="game-start">
-                  <button id="game-start-btn" type="button" className="btn btn-success btn-sm h-20px mr-1" disabled={startGameDisabled} onClick={(e) => startGameController(e, socket, tableData.table, roomId, cardLn)}>{startGameText}</button>
+                  <button id="game-start-btn" type="button" className="btn btn-success btn-sm h-20px mr-1" disabled={startGameDisabled} onClick={(e) => startGameController(e)}>{startGameText}</button>
                 </div>
               </div>
             </div>
             {/* give a clue button */}
-            <Clue />
+            {playerData.player.role == "SPYMASTER" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE")) && <Clue />}
             {/* end guess button */}
-            <EndGuess />
+            {playerData.player.role == "OPERATIVE" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING")) && <EndGuess />}
           </div>
         </div>
         <div className="col w-100 mt-3 mt-md-5 p-0">
