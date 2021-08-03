@@ -74,11 +74,9 @@ export default class Team {
     receive a number as string 
 
     1～9　→　convert it to number type
-      ∞  →　convert it to infinity
   */
   public setGuessCount(clue: IClue): void {
-    if (clue.number == "∞") this.guessCount = Infinity;
-    else this.guessCount = parseInt(clue.number) + 1;
+    this.guessCount = parseInt(clue.number) + 1;
   }
 
   public setGuessCountForJSON(number: string): void {
@@ -95,7 +93,7 @@ export default class Team {
   }
 
   public decreaseCardsRemaining(): void {
-
+    this.cardsRemaining -= 1;
   }
 
   public getCardsRemaining(): number {

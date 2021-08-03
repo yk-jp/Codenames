@@ -45,13 +45,11 @@ const GameTable: FC = (): JSX.Element => {
   };
 
   const disableSpymasterBtnController = () => {
-    if(tableData.table.phase !== "PLAYING") return;
+    if (tableData.table.status !== "PLAYING") return;
     if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE" && !tableData.table.redTeam.spymaster) || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE" && !tableData.table.blueTeam.spymaster)) {
       setIsSpymasterDisabled(false);
-      console.log(tableData.table.redTeam.spymaster);
     }
     else setIsSpymasterDisabled(true);
-    console.log("run");
   };
 
   const shuffleStyleContoller = () => {
@@ -72,28 +70,27 @@ const GameTable: FC = (): JSX.Element => {
     }
   }
 
-  useEffect(() => {
-    // toggle start button depending on how many players each team has.
-    toggleStartGame(tableData.table, setStartGameDisabled);
-    // change start game text
-    chnageStartGameText(tableData.table, setStartGameText);
-    // spymaster toggle
-    setIsSpymasterActive(isSpymaster);
-    // spymaster button enable or disable
-    disableSpymasterBtnController();
-    // language option
-    if (language) document.getElementById(language)!["checked"] = true;
-    // style for shuffle button 
-    shuffleStyleContoller();
 
+  useEffect(() => { 
+     // toggle start button depending on how many players each team has.
+     toggleStartGame(tableData.table, setStartGameDisabled);
+     // change start game text
+     chnageStartGameText(tableData.table, setStartGameText);
+     // spymaster toggle
+     setIsSpymasterActive(isSpymaster);
+     // // spymaster button enable or disable
+     disableSpymasterBtnController();
+     // language option
+     if (language) document.getElementById(language)!["checked"] = true;
+     // style for shuffle button 
+     shuffleStyleContoller();
+  },[tableData.table]);
+
+
+
+  useEffect(() => {
     socket.on("activate-spymaster", (team: string) => {
       if (playerData.player.team === team) setIsSpymasterDisabled(true);
-    });
-
-    socket.on("click-card", () => {
-
-
-
     });
 
     socket.on("reset-spymaster", () => {
@@ -116,9 +113,8 @@ const GameTable: FC = (): JSX.Element => {
 
     return () => {
       socket.off("activate-spymaster");
-      socket.off("clicked-card");
-      socket.off("alert-for-spymaster");
       socket.off("click-card");
+      socket.off("alert-for-spymaster");
       socket.off("alert-message");
       socket.off("reset-spymaster");
     };
@@ -131,7 +127,9 @@ const GameTable: FC = (): JSX.Element => {
           <div className="d-flex flex-column justify-content-center my-2">
             {/* turn */}
             <div className="container">
-              <h5 className="text-center"><span className="text-danger">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span></h5>
+              {JSON.stringify(tableData.table.status)}
+              <h5 className="text-center"><span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span></h5>
+              <h5 className="text-center"><span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span></h5>
               <div className="d-flex justify-content-between">
                 <div className="d-flex">
                   <button onClick={() => copyInputData("link")} className="btn btn-sm btn-outline-success h-20px">COPY</button><input id="link" className="h-20px" type="url" value={url} readOnly />
@@ -146,11 +144,9 @@ const GameTable: FC = (): JSX.Element => {
             {playerData.player && sliceWordList(tableData.table.cards).map((fiveCards, key) => {
               return <CardList {...fiveCards} key={key} />;
             })}
+            {JSON.stringify(tableData.table.redTeam.guessCount)}
+            {JSON.stringify(tableData.table.blueTeam.guessCount)}
 
-            {JSON.stringify(tableData.table.phase)}
-            {JSON.stringify(tableData.table.redTeam.spymaster)}
-            {JSON.stringify(tableData.table.redTeam.phase)}
-            {JSON.stringify(tableData.table.blueTeam.phase)};
             {/* spymaster or operative */}
             <div className="form-check form-switch container d-flex justify-content-end">
               <div className="d-flex">

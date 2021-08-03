@@ -60,6 +60,7 @@ const Game: FC = (): JSX.Element => {
       // table
       socket.on("receive-table", (table: string) => {
         tableData.setTable(JSON.parse(table));
+        console.log(JSON.parse(table).cards);
         // after receiving a table data
         setIsLoading(false);
       });
