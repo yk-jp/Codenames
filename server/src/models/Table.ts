@@ -49,7 +49,7 @@ export default class Table {
   private players: Player[]; //all team members
   public redTeam: Team;
   public blueTeam: Team;
-  public status: string;
+  private status: string;
   public cards: Card[];
   constructor() {
     this.players = []; //no players unless somebody log in to Lobby
@@ -74,7 +74,6 @@ export default class Table {
       if (!team.isTurnEnd() || inputData !== "END GUESSING") {
         // card judgement
         this.cardJudgement(inputData as Card);
-
         if (this.redTeam.isTeamWon() || this.blueTeam.isTeamWon()) {
           //If the number of card remaining is 0, team won 
           this.chanegGameStatus();
@@ -136,6 +135,7 @@ export default class Table {
       // assasin
       if (this.isRedTurn()) {
         this.blueTeam.resetGuessCount();
+
       } else this.redTeam.resetGuessCount();
       // all cards are clicked so that all players can see every answers
       this.updateAllCard();
@@ -315,6 +315,9 @@ export default class Table {
   }
 
   public chanegGameStatus(): void {
+    console.log({"":this.status})
+    console.log({"":"PLAYING"})
+    console.log({"":Table.GAMESTATUS[this.status]})
     this.status = Table.GAMESTATUS[this.status];
   }
 
