@@ -53,7 +53,8 @@ const GameTable: FC = (): JSX.Element => {
   };
 
   const shuffleStyleContoller = () => {
-    if (tableData.table.status !== "START") setIsShuffleDisabled(true);
+    if (tableData.table.status === "PLAYING") setIsShuffleDisabled(true);
+    else setIsShuffleDisabled(false);
   };
 
   const shuffleMembersController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -70,23 +71,21 @@ const GameTable: FC = (): JSX.Element => {
     }
   }
 
+  useEffect(() => {
+    // toggle start button depending on how many players each team has.
+    toggleStartGame(tableData.table, setStartGameDisabled);
+    // change start game text
+    chnageStartGameText(tableData.table, setStartGameText);
+    // spymaster toggle
+    setIsSpymasterActive(isSpymaster);
+    // // spymaster button enable or disable
+    disableSpymasterBtnController();
+    // language option
+    if (language) document.getElementById(language)!["checked"] = true;
+    // style for shuffle button 
+    shuffleStyleContoller();
 
-  useEffect(() => { 
-     // toggle start button depending on how many players each team has.
-     toggleStartGame(tableData.table, setStartGameDisabled);
-     // change start game text
-     chnageStartGameText(tableData.table, setStartGameText);
-     // spymaster toggle
-     setIsSpymasterActive(isSpymaster);
-     // // spymaster button enable or disable
-     disableSpymasterBtnController();
-     // language option
-     if (language) document.getElementById(language)!["checked"] = true;
-     // style for shuffle button 
-     shuffleStyleContoller();
-  },[tableData.table]);
-
-
+  }, [tableData.table]);
 
   useEffect(() => {
     socket.on("activate-spymaster", (team: string) => {
@@ -103,8 +102,8 @@ const GameTable: FC = (): JSX.Element => {
       alert(message);
     });
 
-    socket.on("alert-for-spymaster", (message: string) => {
-      if ((tableData.table.phase === "RED's TURN" && tableData.table.redTeam.phase == "GIVING A CLUE" && playerData.player.team === "RED") || (tableData.table.phase === "BLUE's TURN" && tableData.table.blueTeam.phase == "GIVING A CLUE" && playerData.player.team === "BLUE")) {
+    socket.on("alert-for-spymaster", (message: string, team: string) => {
+      if (playerData.player.team === team) {
         // enable players to hit the button
         setIsSpymasterDisabled(false);
         return alert(message);
@@ -127,9 +126,8 @@ const GameTable: FC = (): JSX.Element => {
           <div className="d-flex flex-column justify-content-center my-2">
             {/* turn */}
             <div className="container">
-              {JSON.stringify(tableData.table.status)}
-              <h5 className="text-center"><span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span></h5>
-              <h5 className="text-center"><span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span></h5>
+              <h5 className="text-center">{tableData.table.status === "PLAYING" && (playerData.player.team === "RED" ? <span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span> : <span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span>)}</h5>
+              <h5 className="text-center">{tableData.table.status === "END" && (playerData.player.team === "RED" ? <span className="text-danger">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span> : <span className="text-primary">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>)}</h5>
               <div className="d-flex justify-content-between">
                 <div className="d-flex">
                   <button onClick={() => copyInputData("link")} className="btn btn-sm btn-outline-success h-20px">COPY</button><input id="link" className="h-20px" type="url" value={url} readOnly />
@@ -144,8 +142,6 @@ const GameTable: FC = (): JSX.Element => {
             {playerData.player && sliceWordList(tableData.table.cards).map((fiveCards, key) => {
               return <CardList {...fiveCards} key={key} />;
             })}
-            {JSON.stringify(tableData.table.redTeam.guessCount)}
-            {JSON.stringify(tableData.table.blueTeam.guessCount)}
 
             {/* spymaster or operative */}
             <div className="form-check form-switch container d-flex justify-content-end">
@@ -165,9 +161,9 @@ const GameTable: FC = (): JSX.Element => {
               </div>
             </div>
             {/* give a clue button */}
-            {playerData.player.role == "SPYMASTER" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE")) && <Clue />}
+            {tableData.table.status !== "END" && (playerData.player.role == "SPYMASTER" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE"))) && <Clue />}
             {/* end guess button */}
-            {playerData.player.role == "OPERATIVE" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING")) && <EndGuess />}
+            {tableData.table.status !== "END" && (playerData.player.role == "OPERATIVE" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING"))) && <EndGuess />}
           </div>
         </div>
         <div className="col w-100 mt-3 mt-md-5 p-0">

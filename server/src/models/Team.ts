@@ -59,7 +59,7 @@ export default class Team {
       3.when the team hit the wrong card. 
   */
   public isTurnEnd(): boolean {
-    return this.guessCount < 0;
+    return this.guessCount <= 0;
   }
 
   public getguessCount(): number {
@@ -69,6 +69,7 @@ export default class Team {
   public isTeamWon(): boolean {
     return this.cardsRemaining <= 0
   }
+
 
   /*
     receive a number as string 

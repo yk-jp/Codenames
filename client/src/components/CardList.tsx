@@ -16,11 +16,8 @@ const CardList = (cards: ICard[], key: number): JSX.Element => {
   const roomId: string = window.location.pathname.split("/").pop() as string;
   const cardColor = (card: ICard): ICardColor => {
     let color: ICardColor;
-    if (card.isClicked) {
-      console.log(card);
-      color = clickedCardStyleForSpymasterAndOperative[card.team];
-      console.log(color);
-    }
+    if (card.isClicked)  color = clickedCardStyleForSpymasterAndOperative[card.team];
+    
     else {
       if (playerData.player.role === "OPERATIVE") color = cardStyleForOperative[card.team]
       else color = cardStyleForSpymaster[card.team];

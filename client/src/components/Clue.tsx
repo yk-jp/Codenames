@@ -10,13 +10,12 @@ import IClue from '../interfaces/IClue';
 const Clue: FC = (): JSX.Element => {
   // context
   const socket = useContext(SocketContext);
-  const { tableData, playerData } = useContext(GameDataContext);
+  const { tableData } = useContext(GameDataContext);
   // useRef
   const word = useRef<HTMLInputElement>(null);
   const number = useRef<HTMLOptionElement>(null);
   // others
   const roomId: string = window.location.pathname.split("/").pop() as string;
-  const playerId: string = sessionStorage.getItem("playerId") as string;
 
   useEffect(() => {
     word.current!.focus();
@@ -46,7 +45,10 @@ const Clue: FC = (): JSX.Element => {
   };
 
   const clueController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (!validationForClueController()) e.preventDefault();
+    if (!validationForClueController()) {
+      e.preventDefault();
+      return;
+    }
     const clue: IClue = {
       "word": word.current!.value.toString(),
       "number": number.current!.value.toString()

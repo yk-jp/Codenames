@@ -5,7 +5,7 @@ const playerId = "test_id";
 
 beforeEach(async () => {
   await roomId_insert(roomId);
-  await player_insert(playerId, roomId, "test");
+  await player_insert(playerId, roomId,"socketid" ,"test");
   // await player_delete(playerId);
 })
 
