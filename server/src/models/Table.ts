@@ -10,8 +10,7 @@ import IGameStatus from '../interfaces/IGameStatus';
 import IClue from '../interfaces/IClue';
 import IPlayer from '../interfaces/IPlayer';
 import WordsInstance from '../interfaces/schema/Words';
-import ICard from '../interfaces/ICard';
-import { isJSDocReturnTag } from 'typescript';
+
 /*
   RED's TURN 
       1.spymaster 
@@ -71,72 +70,85 @@ export default class Table {
       // go to the next action
       team.changePhase();
     } else if (team.getPhase() == "GUESSING") {
-      if (!team.isTurnEnd() || inputData !== "END GUESSING") {
-        // card judgement
-        this.cardJudgement(inputData as Card);
-        if (this.redTeam.isTeamWon() || this.blueTeam.isTeamWon()) {
-          //If the number of card remaining is 0, team won 
-          this.chanegGameStatus();
-          if (this.redTeam.isTeamWon()) this.changeGamePhase("RED");
-          else this.changeGamePhase("BLUE");
-          return;
-        }
-      } else {
-        // go to the next action
-        team.changePhase();
+      if (inputData === "END GUESSING" || team.isTurnEnd()) {
+        this.redTeam.changePhase();
+        this.blueTeam.changePhase();
         // reset guess count
         team.resetGuessCount();
         // change turn
         this.changeGamePhase();
+      } else {
+        // card judgement
+        this.cardJudgement(inputData as Card);
       }
     }
   }
 
   public cardJudgement(card: Card): void {
-    const team: string = this.isRedTurn() ? "RED" : "BLUE";
-    if (this.isRedTurn() && card.getTeam() === team) {
+    if (this.isRedTurn() && card.getTeam() === "RED") {
       // correct answer
       this.redTeam.decreaseCardsRemaining();
       this.redTeam.decreaseGuessCount();
+      if (this.redTeam.isTurnEnd()) {
+        this.redTeam.changePhase();
+        this.blueTeam.changePhase();
+        this.changeGamePhase();
+      }
     } else if (!this.isRedTurn() && card.getTeam() === "BLUE") {
       // correct answer
       this.blueTeam.decreaseCardsRemaining();
       this.blueTeam.decreaseGuessCount();
+      if (this.blueTeam.isTurnEnd()) {
+        this.redTeam.changePhase();
+        this.blueTeam.changePhase();
+        this.changeGamePhase();
+      }
     } else if (this.isRedTurn() && card.getTeam() === "BLUE") {
       /* wrong answer 
          red team hit the blue card
-      */
+     */
       this.changeGamePhase();
+      this.blueTeam.decreaseCardsRemaining();
       this.redTeam.resetGuessCount();
       this.redTeam.changePhase();
       this.blueTeam.changePhase();
     } else if (!this.isRedTurn() && card.getTeam() === "RED") {
       /* wrong answer 
-       blue team hit the blue card
+      blue team hit the blue card
       */
       this.changeGamePhase();
+      this.redTeam.decreaseCardsRemaining();
       this.blueTeam.resetGuessCount();
       this.blueTeam.changePhase();
       this.redTeam.changePhase();
     }
     else if (card.getTeam() === "BYSTANDER") {
-      if (this.isRedTurn()) {
-        this.changeGamePhase();
-        this.redTeam.resetGuessCount();
-        this.redTeam.changePhase();
-        this.blueTeam.changePhase();
-      } else {
-        this.changeGamePhase();
-        this.blueTeam.resetGuessCount();
-        this.blueTeam.changePhase();
-        this.blueTeam.changePhase();
-      }
-    } else {
+      this.changeGamePhase();
+      if (this.redTeam.isTurnEnd()) this.redTeam.resetGuessCount();
+      else this.blueTeam.resetGuessCount();
+      this.redTeam.changePhase();
+      this.blueTeam.changePhase();
+    }
+    else {
       // assasin
       if (this.isRedTurn()) {
-        this.blueTeam.resetGuessCount();
+        this.changeGamePhase("BLUE");
+      } else this.changeGamePhase("RED");
+      // all cards are clicked so that all players can see every answers
+      this.updateAllCard();
+      this.chanegGameStatus();
+    }
 
-      } else this.redTeam.resetGuessCount();
+    if (this.blueTeam.isTeamWon()) {
+      this.changeGamePhase("BLUE");
+      this.chanegGameStatus();
+      // all cards are clicked so that all players can see every answers
+      this.updateAllCard();
+      return;
+    }
+    else if (this.redTeam.isTeamWon()) {
+      this.changeGamePhase("RED");
+      this.chanegGameStatus();
       // all cards are clicked so that all players can see every answers
       this.updateAllCard();
       return;
@@ -315,9 +327,6 @@ export default class Table {
   }
 
   public chanegGameStatus(): void {
-    console.log({"":this.status})
-    console.log({"":"PLAYING"})
-    console.log({"":Table.GAMESTATUS[this.status]})
     this.status = Table.GAMESTATUS[this.status];
   }
 

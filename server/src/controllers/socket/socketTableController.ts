@@ -50,6 +50,32 @@ const socketTableController = (io: any, socket: Socket) => {
     }
   });
 
+  socket.on("end-guess", async (roomId: string) => {
+    try {
+      const tableData: TablesInstance | null = await table_find(roomId);
+
+      if (!tableData) throw new Error("table was not found");
+
+      const table: Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
+
+      table.haveTurn("END GUESSING");
+
+      io.in(roomId).emit("receive-table", JSON.stringify(table));
+
+      //send alert for red team to set a spymaster
+      const message: string = "SELECT A SPYMASTER";
+      if (table.redTeam.getPhase() === "GIVING A CLUE" || table.blueTeam.getPhase() === "GIVING A CLUE") {
+        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "RED");
+        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "BLUE");
+      }
+
+      // update table
+      await table_update(roomId, JSON.stringify(table));
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   socket.on("click-card", async (roomId: string, cardString: string) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
@@ -62,12 +88,11 @@ const socketTableController = (io: any, socket: Socket) => {
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
-
-
-      if ((table.redTeam.getPhase() === "GIVING A CLUE" && !table.redTeam.getSpymaster()) || (table.blueTeam.getPhase() === "GIVING A CLUE" && !table.blueTeam.getSpymaster())) {
-        //send alert for red team to set a spymaster
-        const message: string = "SELECT A SPYMASTER";
-        io.in(roomId).emit("alert-for-spymaster", message);
+      //send alert for red team to set a spymaster
+      const message: string = "SELECT A SPYMASTER";
+      if (table.redTeam.getPhase() === "GIVING A CLUE" || table.blueTeam.getPhase() === "GIVING A CLUE") {
+        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "RED");
+        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "BLUE");
       }
 
       // update table
@@ -115,24 +140,23 @@ const socketTableController = (io: any, socket: Socket) => {
 
       // change gameStatus
       table.chanegGameStatus();
-
       // update table data in db.
       await table_update(roomId, JSON.stringify(table));
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
       const message: string = "SELECT A SPYMASTER";
-      io.in(roomId).emit("alert-for-spymaster", message);
+      io.in(roomId).emit("alert-for-spymaster", message, "RED");
 
     } catch (err) {
       console.log(err);
     }
   });
 
-  socket.on("alert-for-spymaster", async (roomId: string) => {
+  socket.on("alert-for-spymaster", async () => {
     //send alert for red team to set a spymaster
     const message: string = "SELECT A SPYMASTER";
-    io.in(roomId).emit("alert-for-spymaster", message);
+    socket.emit("alert-for-spymaster", message);
   });
 
   socket.on("reset-game", async (roomId: string) => {
