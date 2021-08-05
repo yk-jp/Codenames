@@ -44,7 +44,7 @@ const Game: FC = (): JSX.Element => {
       // roomId
       socket.emit("store-roomId", roomId);
       // join room
-      socket.emit("join-room", roomId, playerId);
+      socket.emit("join-room", roomId, playerId,playerName);
       if (!isAlreadyInitialized) {
         // initialize
         socket.emit("initialize-table-and-player", roomId, playerName, playerId);
@@ -55,12 +55,13 @@ const Game: FC = (): JSX.Element => {
       }
       socket.on("initialize-table-and-player", (isAlreadyInitialized: string) => {
         sessionStorage.setItem("isAlreadyInitialized", isAlreadyInitialized);
+        // log
+        sessionStorage.setItem("log",'WELCOME! \r\n******************\r\n');
       });
 
       // table
       socket.on("receive-table", (table: string) => {
         tableData.setTable(JSON.parse(table));
-        console.log(JSON.parse(table).cards);
         // after receiving a table data
         setIsLoading(false);
       });
@@ -84,10 +85,6 @@ const Game: FC = (): JSX.Element => {
       disconnectionHandler(playerId);
     }
   }, []);
-
-  useEffect(() => {
-
-  });
 
   return (
     <>

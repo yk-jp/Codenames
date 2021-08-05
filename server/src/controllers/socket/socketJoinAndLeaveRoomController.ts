@@ -12,11 +12,15 @@ import { table_find, table_update } from "../queries/TablesQuery";
 import { roomId_delete } from "../queries/RoomIdsQuery";
 
 const socketJoinRoomController = (io: any, socket: Socket): void => {
-  socket.once("join-room", async (roomId: string, playerId: string) => {
+  socket.once("join-room", async (roomId: string, playerId: string, playerName: string) => {
     socket.join(roomId);
     const playerData: PlayersInstance | null = await player_find(playerId);
     if (playerData) {
       await player_socketId_update(playerId, socket.id);
+    } else {
+      // send join message 
+      const message: string = `${playerName} joined :)`;
+      io.in(roomId).emit("receive-message", message);
     }
   });
 
@@ -39,7 +43,13 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
 
       // delete session of the player kicked out of the game
       const socketId: string = playerData.get("socketId");
+
       io.to(socketId).emit("delete-session");
+
+      // send a message to others
+      const message: string = `${player.name} left :(`;
+      io.to(roomId).emit("receive-message", message);
+
       // delete player data from db
       await player_delete(playerId);
 

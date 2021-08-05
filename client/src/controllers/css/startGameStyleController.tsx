@@ -7,7 +7,7 @@ export const toggleStartGame = (table: ITable, setStartGameDisabled: Dispatch<bo
 };
 
 export const chnageStartGameText = (table: ITable, setStartGameText: Dispatch<string>) => {
-  if (table.status == "START") setStartGameText("START GAME");
+  if (table.status === "START") setStartGameText("START GAME");
   else setStartGameText("RESET GAME");
 };
 

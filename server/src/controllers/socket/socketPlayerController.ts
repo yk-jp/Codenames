@@ -44,6 +44,10 @@ const socketPlayerController = (io: any, socket: Socket): void => {
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
+      // send a message 
+      const message: string = `${spymaster.getName()} became a spymaster`;
+      io.in(roomId).emit("receive-message", message);
+
       // update table
       await table_update(roomId, JSON.stringify(table));
       //  update player
