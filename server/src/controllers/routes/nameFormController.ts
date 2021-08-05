@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 // interface
 import TablesInstance from "../../interfaces/schema/Tables";
 import Table from "../../models/Table";
@@ -7,7 +7,7 @@ import { table_find } from "../queries/TablesQuery";
 // model
 import ConvertJson from "../../models/utils/convertJson";
 
-const startSession = async (req: Request, res: Response, next: NextFunction) => {
+const startSession = async (req: Request, res: Response) => {
   const roomId: string = req.body.roomId;
   const tableData: TablesInstance | null = await table_find(roomId);
   if (tableData) {

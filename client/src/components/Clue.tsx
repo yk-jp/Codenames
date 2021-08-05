@@ -16,6 +16,7 @@ const Clue: FC = (): JSX.Element => {
   const number = useRef<HTMLOptionElement>(null);
   // others
   const roomId: string = window.location.pathname.split("/").pop() as string;
+  const playerName:string = sessionStorage.getItem("playerName") as string;
 
   useEffect(() => {
     word.current!.focus();
@@ -53,7 +54,7 @@ const Clue: FC = (): JSX.Element => {
       "word": word.current!.value.toString(),
       "number": number.current!.value.toString()
     }
-    socket.emit("give-a-clue", roomId, JSON.stringify(clue));
+    socket.emit("give-a-clue", roomId, JSON.stringify(clue),playerName);
   }
 
   return (

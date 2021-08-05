@@ -6,7 +6,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { LocationContext } from '../context/LocationHistoryContext';
 import { v4 as uuidv4 } from 'uuid';
 import config from '../config/config';
-import { join } from 'path';
+
 const NameForm: FC = (): JSX.Element => {
   const name = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

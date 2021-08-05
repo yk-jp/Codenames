@@ -30,7 +30,7 @@ const socketTableController = (io: any, socket: Socket) => {
     }
   })
 
-  socket.on("give-a-clue", async (roomId: string, clueString: string) => {
+  socket.on("give-a-clue", async (roomId: string, clueString: string, playerName: string) => {
     const clue: IClue = JSON.parse(clueString);
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
@@ -45,12 +45,15 @@ const socketTableController = (io: any, socket: Socket) => {
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
       socket.to(roomId).emit("alert-message", `${clue.word} ${clue.number}`);
+      // send a message
+      const message: string = `${playerName} gave clue "${clue.word} ${clue.number}" `;
+      io.in(roomId).emit("receive-message", message);
     } catch (err) {
       console.log(err);
     }
   });
 
-  socket.on("end-guess", async (roomId: string) => {
+  socket.on("end-guess", async (roomId: string, playerName: string) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
 
@@ -63,11 +66,15 @@ const socketTableController = (io: any, socket: Socket) => {
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
       //send alert for red team to set a spymaster
-      const message: string = "SELECT A SPYMASTER";
       if (table.redTeam.getPhase() === "GIVING A CLUE" || table.blueTeam.getPhase() === "GIVING A CLUE") {
-        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "RED");
-        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "BLUE");
+        const alert: string = "SELECT A SPYMASTER";
+        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", alert, "RED");
+        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", alert, "BLUE");
       }
+
+      // send a message 
+      const message: string = `${playerName} ended guess`;
+      io.in(roomId).emit("receive-message", message);
 
       // update table
       await table_update(roomId, JSON.stringify(table));
@@ -76,7 +83,7 @@ const socketTableController = (io: any, socket: Socket) => {
     }
   });
 
-  socket.on("click-card", async (roomId: string, cardString: string) => {
+  socket.on("click-card", async (roomId: string, cardString: string, playerName: string) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
 
@@ -89,10 +96,20 @@ const socketTableController = (io: any, socket: Socket) => {
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
       //send alert for red team to set a spymaster
-      const message: string = "SELECT A SPYMASTER";
+
       if (table.redTeam.getPhase() === "GIVING A CLUE" || table.blueTeam.getPhase() === "GIVING A CLUE") {
-        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "RED");
-        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", message, "BLUE");
+        const alert: string = "SELECT A SPYMASTER";
+        if (!table.redTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", alert, "RED");
+        else if (!table.blueTeam.getSpymaster()) io.in(roomId).emit("alert-for-spymaster", alert, "BLUE");
+      }
+
+      // send a message 
+      let message: string = `${playerName} clicked "${card.getWord()}"`;
+      io.in(roomId).emit("receive-message", message);
+
+      if (table.getGameStatus() === "END") {
+        message =`${table.getGamePhase()} =D>`;
+        io.in(roomId).emit("receive-message", message);
       }
 
       // update table
@@ -145,8 +162,13 @@ const socketTableController = (io: any, socket: Socket) => {
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
-      const message: string = "SELECT A SPYMASTER";
-      io.in(roomId).emit("alert-for-spymaster", message, "RED");
+      // send a message 
+      const message: string = `game start!`;
+      io.in(roomId).emit("receive-message", message);
+
+      const alert: string = "SELECT A SPYMASTER";
+      io.in(roomId).emit("alert-for-spymaster", alert, "RED");
+
 
     } catch (err) {
       console.log(err);

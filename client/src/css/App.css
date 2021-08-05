@@ -37,6 +37,13 @@ table, th, tr, td {
   border: 2px solid black;
 }
 
+/* start game button */
+/* shuffle members button  */
+.resize { 
+  word-wrap: break-word;
+}
+
+
 /* card */
 
 .card {

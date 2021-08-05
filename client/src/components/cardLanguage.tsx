@@ -13,6 +13,7 @@ const CardLanguageRadio = ({ roomId, cardLn }): JSX.Element => {
   
   const cardLanguageStyleContoller = (table: ITable, setIsCardLanguageDisabled: Dispatch<boolean>) => {
     if (table.status !== "START") setIsCardLanguageDisabled(true);
+    else  setIsCardLanguageDisabled(false);
   };
   const cardLanguageController = (e: ChangeEvent<HTMLInputElement>, socket: Socket, roomId: string) => {
     sessionStorage.setItem("language", e.target.id);
@@ -36,8 +37,8 @@ const CardLanguageRadio = ({ roomId, cardLn }): JSX.Element => {
     <div id="language" className="mx-5 d-flex">
       {cardLanguage.map((language, index) => {
         return (
-          <div key={index}>
-            <input id={language} type="radio" ref={cardLn} name="language" onChange={(e) => cardLanguageController(e, socket, roomId)} disabled={isCardLanguageDisabled} />
+          <div key={index} className="d-flex">
+            <input id={language} type="radio" ref={cardLn} name="language" className="my-2" onChange={(e) => cardLanguageController(e, socket, roomId)} disabled={isCardLanguageDisabled} />
             <label className="form-check-label mx-2" htmlFor={language}>{language}</label>
           </div>
         );

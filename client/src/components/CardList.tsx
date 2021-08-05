@@ -14,6 +14,8 @@ const CardList = (cards: ICard[], key: number): JSX.Element => {
   const { tableData, playerData } = useContext(GameDataContext);
   let cardList: JSX.Element[] = [];
   const roomId: string = window.location.pathname.split("/").pop() as string;
+  const playerName:string = sessionStorage.getItem("playerName") as string;
+  
   const cardColor = (card: ICard): ICardColor => {
     let color: ICardColor;
     if (card.isClicked)  color = clickedCardStyleForSpymasterAndOperative[card.team];
@@ -30,7 +32,7 @@ const cardClicked = (card: ICard) => {
   if (playerData.player.role === "SPYMASTER") return;
   else {
     if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING")) {
-      socket.emit("click-card", roomId, JSON.stringify(card));
+      socket.emit("click-card", roomId, JSON.stringify(card),playerName);
     }
   }
 }
@@ -47,7 +49,7 @@ for (const index in cards) {
 
 return (
   <>
-    {cardList != [] &&
+    {cardList !== [] &&
       < div className="w-100 container">
         <div className="row flex-nowrap">
           {cardList}

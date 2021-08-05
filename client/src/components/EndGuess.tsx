@@ -7,9 +7,10 @@ const EndGuess: FC = (): JSX.Element => {
   const socket = useContext(SocketContext);
   // others
   const roomId: string = window.location.pathname.split("/").pop() as string;
+  const playerName: string = sessionStorage.getItem("playerName") as string;
 
   const endGuessController = () => {
-    socket.emit("end-guess", roomId);
+    socket.emit("end-guess", roomId,playerName);
   };
 
   return (
