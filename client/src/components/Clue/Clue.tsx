@@ -1,13 +1,13 @@
-import { FC, useRef, useContext, useEffect } from 'react';
+import { useRef, useContext, useEffect } from 'react';
 // component
-import Pulldown from './Pulldown';
+import Pulldown from '../Pulldown/Pulldown';
 // context
-import { SocketContext } from '../context/SocketContext';
-import { GameDataContext } from '../context/GameDataContext';
+import { SocketContext } from '../../context/SocketContext';
+import { GameDataContext } from '../../context/GameDataContext';
 // interface
-import IClue from '../interfaces/IClue';
+import IClue from '../../interfaces/IClue';
 
-const Clue: FC = (): JSX.Element => {
+const Clue = (): JSX.Element => {
   // context
   const socket = useContext(SocketContext);
   const { tableData } = useContext(GameDataContext);

@@ -1,22 +1,25 @@
-import { FC, useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
+// config
+import Storage from '../../config/storage';
 //components
-import TeamTable from './TeamTable';
-import CardList from './CardList';
-import Clue from './Clue';
-import EndGuess from './EndGuess';
-import CardLanguageRadio from './cardLanguage';
-import InviteUrl from './InviteUrl';
+import TeamTable from '../TeamTable/TeamTable';
+import CardList from '../CardList/CardList';
+import Clue from '../Clue/Clue';
+import EndGuess from '../EndGuess/EndGuess';
+import CardLanguageRadio from '../CardLanguageRadio/CardLanguageRadio';
+import InviteUrl from '../InviteUrl/InviteUrl';
+import Log from '../Log/Log';
 // hook
-import sliceWordList from '../hooks/sliceWordList';
+import sliceWordList from '../../hooks/sliceWordList';
 // context
-import { SocketContext } from '../context/SocketContext';
-import { GameDataContext } from '../context/GameDataContext';
+import { SocketContext } from '../../context/SocketContext';
+import { GameDataContext } from '../../context/GameDataContext';
 // css
-import { toggleStartGame, chnageStartGameText } from '../controllers/css/startGameStyleController';
-import { blueTeamStyle, redTeamStyle } from '../css/teamTableStyle';
+import { toggleStartGame, chnageStartGameText } from '../../controllers/css/startGameStyleController';
+import { blueTeamStyle, redTeamStyle } from '../TeamTable/teamTableStyle';
+import GameTableStyle from './GameTable.module.css';
 
-const GameTable: FC = (): JSX.Element => {
-
+const GameTable = (): JSX.Element => {
   // context
   const socket = useContext(SocketContext);
   const { tableData, playerData } = useContext(GameDataContext);
@@ -27,16 +30,10 @@ const GameTable: FC = (): JSX.Element => {
 
   const [startGameText, setStartGameText] = useState<string>();
   const [isSpymasterActive, setIsSpymasterActive] = useState<boolean>(false);
-  const [logText, setLogText] = useState<string>("WELCOME! \r\n******************\r\n");
-
   // useRef
   const cardLn = useRef<HTMLInputElement>(null);
   // data from localstorage
-  const playerId: string = sessionStorage.getItem("playerId") as string;
-  const isSpymaster: boolean = sessionStorage.getItem("isSpymaster") as string === "true";
-  const roomId: string = window.location.pathname.split("/").pop() as string;
-  const language: string = sessionStorage.getItem("language") as string;
-  const log: string = sessionStorage.getItem("log") as string;
+  const { playerId, roomId, isSpymaster } = Storage();
 
   const activateSpymasterController = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
@@ -73,25 +70,17 @@ const GameTable: FC = (): JSX.Element => {
     }
   }
 
-  const logTextController = () => {
-    if (log) setLogText(log);
-  };
-
   useEffect(() => {
     // toggle start button depending on how many players each team has.
     toggleStartGame(tableData.table, setStartGameDisabled);
     // change start game text
     chnageStartGameText(tableData.table, setStartGameText);
     // spymaster toggle
-    setIsSpymasterActive(isSpymaster);
+    setIsSpymasterActive(isSpymaster === "true");
     // // spymaster button enable or disable
     disableSpymasterBtnController();
-    // language option
-    if (language) document.getElementById(language)!["checked"] = true;
     // style for shuffle button 
     shuffleStyleContoller();
-    // log
-    logTextController();
   }, [tableData.table]);
 
   useEffect(() => {
@@ -117,20 +106,12 @@ const GameTable: FC = (): JSX.Element => {
       }
     });
 
-    socket.on("receive-message", (message: string) => {
-      let currentLog: string = sessionStorage.getItem("log") as string;
-      currentLog += `${message} \r\n******************\r\n`;
-      sessionStorage.setItem("log", currentLog);
-      setLogText(currentLog);
-    });
-
     return () => {
       socket.off("activate-spymaster");
       socket.off("click-card");
       socket.off("alert-for-spymaster");
       socket.off("alert-message");
       socket.off("reset-spymaster");
-      socket.off("receive-message");
     };
   }, []);
 
@@ -141,8 +122,13 @@ const GameTable: FC = (): JSX.Element => {
           <div className="d-flex flex-column justify-content-center my-2">
             {/* turn */}
             <div className="container">
-              <h5 className="text-center">{tableData.table.status === "PLAYING" && (playerData.player.team === "RED" ? <span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span> : <span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span>)}</h5>
-              <h5 className="text-center">{tableData.table.status === "END" && (playerData.player.team === "RED" ? <span className="text-danger">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span> : <span className="text-primary">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>)}</h5>
+              <h5 className="text-center">{tableData.table.status === "PLAYING" && (playerData.player.team === "RED"
+                ? <span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span>
+                : <span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span>)}</h5>
+              <h5 className="text-center">{tableData.table.status === "END" && ((playerData.player.team === "RED" && tableData.table.phase === "BLUE WON") ?
+                <span className="text-primary">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>
+                : <span className="text-danger">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>)}</h5>
+
               <div className="d-flex justify-content-between">
                 <div className="d-flex">
                   <InviteUrl />
@@ -162,16 +148,16 @@ const GameTable: FC = (): JSX.Element => {
             <div className="form-check form-switch container d-flex justify-content-end">
               <div className="d-flex">
                 {/* jp or en */}
-                <CardLanguageRadio roomId={roomId} cardLn={cardLn} />
+                <CardLanguageRadio cardLn={cardLn} />
                 <div id="role" className="mt-1">
                   <input id="activate-spymaster" className="form-check-input" type="checkbox" onChange={(e) => { activateSpymasterController(e) }} checked={isSpymasterActive} disabled={isSpymasterDisabled} />
                   <label className="form-check-label mx-2" htmlFor="activate-spymaster">SPYMASTER</label>
                 </div>
                 <div id="shuffle">
-                  <button type="button" className="btn btn-outline-success btn-sm h-20px mx-2 resize" onClick={(e) => shuffleMembersController(e)} disabled={isShuffleDisabled}>SHUFFLE MEMBERS</button>
+                  <button type="button" className={`btn btn-outline-success ${GameTableStyle["btn-sm"]} h-20px mx-2 resize`} onClick={(e) => shuffleMembersController(e)} disabled={isShuffleDisabled}>SHUFFLE MEMBERS</button>
                 </div>
                 <div id="game-start">
-                  <button id="game-start-btn" type="button" className="btn btn-success btn-sm h-20px mr-1 resize" disabled={startGameDisabled} onClick={(e) => startGameController(e)}>{startGameText}</button>
+                  <button id="game-start-btn" type="button" className={`btn btn-success ${GameTableStyle["btn-sm"]} h-20px mr-1 resize`} disabled={startGameDisabled} onClick={(e) => startGameController(e)}>{startGameText}</button>
                 </div>
               </div>
             </div>
@@ -192,10 +178,7 @@ const GameTable: FC = (): JSX.Element => {
             </div>
           </div>
           {/* log */}
-          <div id="log" className="form-group offset-sm-1 offset-md-0 col-10 col-md-12">
-            <textarea className="form-control resize-none bg-white p-0 log mt-md-5 text-success" id="comment" value={logText} readOnly>
-            </textarea>
-          </div>
+          <Log />
         </div>
       </div>
     </div>

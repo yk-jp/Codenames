@@ -1,1 +1,3 @@
-export const cardLanguage: string[] = ["jp", "en"];
+const cardLanguage: string[] = ["jp", "en"];
+
+export default cardLanguage;

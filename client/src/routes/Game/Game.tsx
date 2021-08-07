@@ -1,14 +1,14 @@
-import { FC, useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Socket } from "socket.io-client";
 // component
-import GameTable from './GameTable';
-import Loading from './Loading';
+import GameTable from '../../components/GameTable/GameTable';
+import Loading from '../../components/Loading/Loading';
 //context
-import { LocationContext } from '../context/LocationHistoryContext';
-import { SocketContext } from '../context/SocketContext';
-import { GameDataContext } from '../context/GameDataContext';
+import { LocationContext } from '../../context/LocationHistoryContext';
+import { SocketContext } from '../../context/SocketContext';
+import { GameDataContext } from '../../context/GameDataContext';
 
-const Game: FC = (): JSX.Element => {
+const Game = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const roomId: string = window.location.pathname.split("/").pop() as string;
@@ -44,7 +44,7 @@ const Game: FC = (): JSX.Element => {
       // roomId
       socket.emit("store-roomId", roomId);
       // join room
-      socket.emit("join-room", roomId, playerId,playerName);
+      socket.emit("join-room", roomId, playerId, playerName);
       if (!isAlreadyInitialized) {
         // initialize
         socket.emit("initialize-table-and-player", roomId, playerName, playerId);
@@ -56,7 +56,7 @@ const Game: FC = (): JSX.Element => {
       socket.on("initialize-table-and-player", (isAlreadyInitialized: string) => {
         sessionStorage.setItem("isAlreadyInitialized", isAlreadyInitialized);
         // log
-        sessionStorage.setItem("log",'WELCOME! \r\n******************\r\n');
+        sessionStorage.setItem("log", 'WELCOME! \r\n******************\r\n');
       });
 
       // table

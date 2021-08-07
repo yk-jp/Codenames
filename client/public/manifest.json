@@ -1,6 +1,6 @@
 {
-  "short_name": "CODENAMES",
-  "name": "CODENAMES",
+  "short_name": "Codenames",
+  "name": "Codenames",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
