@@ -1,6 +1,4 @@
-import { useEffect, useState, useContext, useRef } from 'react';
-// config
-import Storage from '../../config/storage';
+import { useContext } from 'react';
 //components
 import TeamTable from '../TeamTable/TeamTable';
 import CardList from '../CardList/CardList';
@@ -12,98 +10,23 @@ import Log from '../Log/Log';
 // hook
 import sliceWordList from '../../hooks/sliceWordList';
 // context
-import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
 // css
 import { blueTeamStyle, redTeamStyle } from '../TeamTable/teamTableStyle';
 import GameTableStyle from './GameTable.module.css';
 // controller
-import { startGameController,toggleStartGame, chnageStartGameText } from './StartGameController';
-
+import StartGameController from './StartGameController';
+import SpymasterController from './SpymasterController';
+import GameTableController from './GameTableController';
+import ShuffleController from './ShuffleController';
 const GameTable = (): JSX.Element => {
-  // context
-  const socket = useContext(SocketContext);
+
   const { tableData, playerData } = useContext(GameDataContext);
-  // useState
-  const [startGameDisabled, setStartGameDisabled] = useState<boolean>(true);
-  const [isShuffleDisabled, setIsShuffleDisabled] = useState<boolean>(false);
-  const [isSpymasterDisabled, setIsSpymasterDisabled] = useState<boolean>(true);
-
-  const [startGameText, setStartGameText] = useState<string>();
-  const [isSpymasterActive, setIsSpymasterActive] = useState<boolean>(false);
-  // data from localstorage
-  const { playerId, roomId, isSpymaster } = Storage();
-
-  const activateSpymasterController = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      sessionStorage.setItem("isSpymaster", "true");
-      socket.emit("activate-spymaster", playerId, roomId);
-      setIsSpymasterActive(true);
-    }
-  };
-
-  const disableSpymasterBtnController = () => {
-    if (tableData.table.status !== "PLAYING") return;
-    if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE" && !tableData.table.redTeam.spymaster) || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE" && !tableData.table.blueTeam.spymaster)) {
-      setIsSpymasterDisabled(false);
-    }
-    else setIsSpymasterDisabled(true);
-  };
-
-  const shuffleStyleContoller = () => {
-    if (tableData.table.status === "PLAYING") setIsShuffleDisabled(true);
-    else setIsShuffleDisabled(false);
-  };
-
-  const shuffleMembersController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (window.confirm("SHUFFLE MEMBERS ?")) socket.emit("shuffle-members", roomId);
-    else e.preventDefault();
-  }
-
-  useEffect(() => {
-    // toggle start button depending on how many players each team has.
-    toggleStartGame(tableData.table, setStartGameDisabled);
-    // change start game text
-    chnageStartGameText(tableData.table, setStartGameText);
-    // spymaster toggle
-    setIsSpymasterActive(isSpymaster === "true");
-    // // spymaster button enable or disable
-    disableSpymasterBtnController();
-    // style for shuffle button 
-    shuffleStyleContoller();
-  }, [tableData.table]);
-
-  useEffect(() => {
-    socket.on("activate-spymaster", (team: string) => {
-      if (playerData.player.team === team) setIsSpymasterDisabled(true);
-    });
-
-    socket.on("reset-spymaster", () => {
-      sessionStorage.removeItem("isSpymaster");
-      setIsSpymasterDisabled(true);
-      setIsSpymasterActive(false);
-    });
-
-    socket.on("alert-message", (message: string) => {
-      alert(message);
-    });
-
-    socket.on("alert-for-spymaster", (message: string, team: string) => {
-      if (playerData.player.team === team) {
-        // enable players to hit the button
-        setIsSpymasterDisabled(false);
-        return alert(message);
-      }
-    });
-
-    return () => {
-      socket.off("activate-spymaster");
-      socket.off("click-card");
-      socket.off("alert-for-spymaster");
-      socket.off("alert-message");
-      socket.off("reset-spymaster");
-    };
-  }, [socket]);
+  const { startGameText, startGameDisabled, startGameController } = StartGameController();
+  const { isSpymasterActive, isSpymasterDisabled, activateSpymasterController } = SpymasterController();
+  const { isShuffleDisabled, shuffleMembersController } = ShuffleController();
+  
+  GameTableController();
 
   return (
     <div className="container-fluid">
@@ -149,7 +72,7 @@ const GameTable = (): JSX.Element => {
                 </div>
                 {/* start game */}
                 <div id="game-start">
-                  <button id="game-start-btn" type="button" className={`btn btn-success ${GameTableStyle["btn-sm"]} h-20px mr-1 resize`} disabled={startGameDisabled} onClick={(e) => startGameController(e, tableData.table, socket)}>{startGameText}</button>
+                  <button id="game-start-btn" type="button" className={`btn btn-success ${GameTableStyle["btn-sm"]} h-20px mr-1 resize`} disabled={startGameDisabled} onClick={(e) => startGameController(e)}>{startGameText}</button>
                 </div>
               </div>
             </div>
