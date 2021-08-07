@@ -11,8 +11,10 @@ const Storage = () => {
   const language: string = sessionStorage.getItem("language") as string;
   // log
   const log: string = sessionStorage.getItem("log") as string;
+  // initialized or not
+  const isAlreadyInitialized: string | null = sessionStorage.getItem("isAlreadyInitialized") as string;
 
-  return { playerId, playerName, roomId, log, language, isSpymaster };
+  return { playerId, playerName, roomId, log, language, isSpymaster,isAlreadyInitialized };
 };
 
 export default Storage;
