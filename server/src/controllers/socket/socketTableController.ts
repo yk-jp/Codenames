@@ -119,11 +119,6 @@ const socketTableController = (io: any, socket: Socket) => {
     }
   });
 
-  //card language
-  socket.on("change-card-language", (cardLanguage: string, roomId: string) => {
-    io.in(roomId).emit("change-card-language", cardLanguage);
-  });
-
   socket.on("shuffle-members", async (roomId: string) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
