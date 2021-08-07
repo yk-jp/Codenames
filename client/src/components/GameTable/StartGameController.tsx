@@ -6,7 +6,7 @@ import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
 
 const StartGameController = () => {
-  const { language, roomId } = Storage();
+  const { roomId } = Storage();
 
   // context
   const socket = useContext(SocketContext);
@@ -16,6 +16,7 @@ const StartGameController = () => {
   const [startGameText, setStartGameText] = useState<string>();
 
   const startGameController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const { language } = Storage();
     if (tableData.table.status === "START") {
       if (window.confirm("START GAME ?")) socket.emit("start-game", roomId, language);
       else e.preventDefault();

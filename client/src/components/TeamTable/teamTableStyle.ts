@@ -1,4 +1,4 @@
-import ITeamTable from "./ITeamTable";
+import ITeamTable from "../../interfaces/ITeamTable";
 
 export const blueTeamStyle: ITeamTable = {
   id: "blue",
