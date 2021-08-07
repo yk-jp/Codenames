@@ -1,0 +1,31 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+
+.h-20px {
+  height: 20px;
+}
+
+.h-75 {
+  height: 75%;
+}
+
+/* start game button */
+
+/* shuffle members button  */
+
+.resize {
+  word-wrap: break-word;
+}
+
+/* log */
+
+.resize-none {
+  resize: none;
+}
+
+.log {
+  height: 50vh;
+  overflow: scroll;
+}

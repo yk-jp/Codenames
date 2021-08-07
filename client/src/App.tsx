@@ -1,24 +1,22 @@
-import React, { FC } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import './css/App.css';
+import './App.css';
 //components
-import Home from './components/Home';
-import Title from './components/Title';
-import Game from './components/Game';
-import NameForm from './components/NameForm';
-import NotFound from './components/NotFound';
+import Home from './routes/Home/Home';
+import Title from './components/Title/Title';
+import Game from './routes/Game/Game';
+import NameForm from './routes/NameForm/NameForm';
+import NotFound from './components/NotFound/NotFound';
 // context
 import { LocationHistoryProvider } from './context/LocationHistoryContext';
 import { SocketProvider } from './context/SocketContext';
 import { GameDataProvider } from './context/GameDataContext';
-const App: FC = () => {
+const App = () :JSX.Element=> {
   return (
     <Router>
       <div className="App">
         <Title />
         <Switch>
           <Route exact path="/" component={Home} />
-          {/* <Route exact path="/form" component={NameForm} /> */}
           <Route exact path="/form">
             <LocationHistoryProvider>
               <NameForm />

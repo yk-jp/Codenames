@@ -1,6 +1,4 @@
-import { FC } from 'react';
-
-const Loading: FC = (): JSX.Element => {
+const Loading = (): JSX.Element => {
 
   return (
     <div className="d-flex align-items-center">

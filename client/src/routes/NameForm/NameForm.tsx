@@ -1,11 +1,12 @@
 import { FC, useState, useRef, useContext } from 'react';
 // hook 
-import { postDataForForm } from '../hooks/postDataForForm';
+import { postDataForForm } from '../../hooks/postDataForForm';
 // others
 import { AxiosError, AxiosResponse } from 'axios';
-import { LocationContext } from '../context/LocationHistoryContext';
+import { LocationContext } from '../../context/LocationHistoryContext';
 import { v4 as uuidv4 } from 'uuid';
-import config from '../config/config';
+import NameFormStyle from './NameForm.module.css';
+import config from '../../config/config';
 
 const NameForm: FC = (): JSX.Element => {
   const name = useRef<HTMLInputElement>(null);
@@ -47,7 +48,7 @@ const NameForm: FC = (): JSX.Element => {
     <div className="container py-5">
       <div className="d-flex justify-content-center mt-5">
         {/* name */}
-        <div className="name d-flex flex-column">
+        <div className={`${NameFormStyle.name} d-flex flex-column`}>
           <form onSubmit={(e) => joinRoom(e)}>
             <div className="d-flex justify-content-center p-5">
               <input id="playerName" type="text" className="my-3 text-center" name="name" placeholder="ENTER YOUR NAME" ref={name} required />

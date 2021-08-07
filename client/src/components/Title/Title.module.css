@@ -1,0 +1,9 @@
+.textDecorationNone { 
+  text-decoration:none;
+}
+
+.title {
+  color: black;
+  text-align: center;
+  display: inline!important;
+} 

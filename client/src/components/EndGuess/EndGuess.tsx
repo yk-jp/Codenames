@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
 // context
-import { SocketContext } from '../context/SocketContext';
+import { SocketContext } from '../../context/SocketContext';
 
 const EndGuess: FC = (): JSX.Element => {
   // context
