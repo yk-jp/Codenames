@@ -15,9 +15,10 @@ import sliceWordList from '../../hooks/sliceWordList';
 import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
 // css
-import { toggleStartGame, chnageStartGameText } from '../../controllers/css/startGameStyleController';
 import { blueTeamStyle, redTeamStyle } from '../TeamTable/teamTableStyle';
 import GameTableStyle from './GameTable.module.css';
+// controller
+import { startGameController,toggleStartGame, chnageStartGameText } from './StartGameController';
 
 const GameTable = (): JSX.Element => {
   // context
@@ -30,8 +31,6 @@ const GameTable = (): JSX.Element => {
 
   const [startGameText, setStartGameText] = useState<string>();
   const [isSpymasterActive, setIsSpymasterActive] = useState<boolean>(false);
-  // useRef
-  const cardLn = useRef<HTMLInputElement>(null);
   // data from localstorage
   const { playerId, roomId, isSpymaster } = Storage();
 
@@ -59,15 +58,6 @@ const GameTable = (): JSX.Element => {
   const shuffleMembersController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (window.confirm("SHUFFLE MEMBERS ?")) socket.emit("shuffle-members", roomId);
     else e.preventDefault();
-  }
-  const startGameController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (tableData.table.status === "START") {
-      if (window.confirm("START GAME ?")) socket.emit("start-game", roomId, cardLn.current!.id);
-      else e.preventDefault();
-    } else {
-      if (window.confirm("RESET GAME ?")) socket.emit("reset-game", roomId);
-      else e.preventDefault();
-    }
   }
 
   useEffect(() => {
@@ -113,7 +103,7 @@ const GameTable = (): JSX.Element => {
       socket.off("alert-message");
       socket.off("reset-spymaster");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <div className="container-fluid">
@@ -148,16 +138,18 @@ const GameTable = (): JSX.Element => {
             <div className="form-check form-switch container d-flex justify-content-end">
               <div className="d-flex">
                 {/* jp or en */}
-                <CardLanguageRadio cardLn={cardLn} />
+                <CardLanguageRadio />
                 <div id="role" className="mt-1">
                   <input id="activate-spymaster" className="form-check-input" type="checkbox" onChange={(e) => { activateSpymasterController(e) }} checked={isSpymasterActive} disabled={isSpymasterDisabled} />
                   <label className="form-check-label mx-2" htmlFor="activate-spymaster">SPYMASTER</label>
                 </div>
+                {/* shuffle members */}
                 <div id="shuffle">
                   <button type="button" className={`btn btn-outline-success ${GameTableStyle["btn-sm"]} h-20px mx-2 resize`} onClick={(e) => shuffleMembersController(e)} disabled={isShuffleDisabled}>SHUFFLE MEMBERS</button>
                 </div>
+                {/* start game */}
                 <div id="game-start">
-                  <button id="game-start-btn" type="button" className={`btn btn-success ${GameTableStyle["btn-sm"]} h-20px mr-1 resize`} disabled={startGameDisabled} onClick={(e) => startGameController(e)}>{startGameText}</button>
+                  <button id="game-start-btn" type="button" className={`btn btn-success ${GameTableStyle["btn-sm"]} h-20px mr-1 resize`} disabled={startGameDisabled} onClick={(e) => startGameController(e, tableData.table, socket)}>{startGameText}</button>
                 </div>
               </div>
             </div>

@@ -25,7 +25,7 @@ const Log = (): JSX.Element => {
     return (() => {
       socket.off("receive-message");
     });
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     LogTextController(setLogText);
