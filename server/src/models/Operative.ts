@@ -1,5 +1,5 @@
 // config
-import Term from '../config/term';
+import Term from '../config/Term';
 // class
 import Player from './Player';
 export default class Operative extends Player {

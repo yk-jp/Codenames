@@ -1,5 +1,5 @@
 // config
-import Term from '../config/term';
+import Term from '../config/Term';
 // class
 import Player from './Player';
 import Spymaster from './Spymaster';
@@ -33,38 +33,6 @@ export default class Team {
     this.teamMembers = [];
     this.guessCount = -1;
     this.cardsRemaining = this.name == Term.Team.RED ? 8 : 7; //red:8, blue:7
-  }
-
-  /*  
-    receive player id of the player who will become a spymaster and divide players
-  */
-  public dividePlayers(player: Spymaster) {
-    const playerId: string = player.getId();
-    this.teamMembers.map(member => {
-      if (member.getId() === playerId) this.setSpymaster(player);  // don't update the player in teamMember.  
-      else this.operatives.push(member);
-    });
-  };
-
-  public resetTeam(): void {
-    this.phase = (this.name === Term.Team.RED) ? Term.TeamPhase.GIVINGACLUE : Term.TeamPhase.WAITINGFORTURN;
-    this.spymaster = null;
-    this.operatives = [];
-    this.guessCount = -1;
-    this.cardsRemaining = (this.name == Term.Team.RED) ? 8 : 7;
-  }
-
-  /* ※ When it's applicable to folloing 1 to 3, this.guessCount should be 1, executing resetGuessCount() in advance.
-      1.when the team could guess all
-      2.when the team stop guessing to end turn
-      3.when the team hit the wrong card. 
-  */
-  public isTurnEnd(): boolean {
-    return this.guessCount <= 0;
-  }
-
-  public isTeamWon(): boolean {
-    return this.cardsRemaining <= 0
   }
 
   // ********************GuessCount ****************** // 
@@ -145,7 +113,7 @@ export default class Team {
 
   public deleteMemberFromTeamMembers(target: IPlayer): Operative {
     const playerAt: number = this.playerAt(this.teamMembers, target.id) as number;
-    const deletedPlayer: Operative =  this.teamMembers[playerAt];
+    const deletedPlayer: Operative = this.teamMembers[playerAt];
     this.teamMembers[playerAt] = this.teamMembers[this.teamMembers.length - 1];
     this.teamMembers.pop();
     return deletedPlayer;
@@ -200,5 +168,37 @@ export default class Team {
       if (player.getId() === playerId) playerAt = index;
     });
     return playerAt;
+  }
+
+  /* ※ When it's applicable to folloing 1 to 3, this.guessCount should be 1, executing resetGuessCount() in advance.
+      1.when the team could guess all
+      2.when the team stop guessing to end turn
+      3.when the team hit the wrong card. 
+  */
+  public isTurnEnd(): boolean {
+    return this.guessCount <= 0;
+  }
+
+  public isTeamWon(): boolean {
+    return this.cardsRemaining <= 0
+  }
+
+  /*  
+    receive player id of the player who will become a spymaster and divide players
+  */
+  public dividePlayers(player: Spymaster): void {
+    const playerId: string = player.getId();
+    this.teamMembers.map(member => {
+      if (member.getId() === playerId) this.setSpymaster(player);  // don't update the player in teamMember.  
+      else this.operatives.push(member);
+    });
+  };
+
+  public resetTeam(): void {
+    this.phase = (this.name === Term.Team.RED) ? Term.TeamPhase.GIVINGACLUE : Term.TeamPhase.WAITINGFORTURN;
+    this.spymaster = null;
+    this.operatives = [];
+    this.guessCount = -1;
+    this.cardsRemaining = (this.name == Term.Team.RED) ? 8 : 7;
   }
 }

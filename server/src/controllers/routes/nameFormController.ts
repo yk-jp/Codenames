@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 // message
-import Message from "../../config/message";
+import Message from "../../config/Message";
 // interface
 import TablesInstance from "../../interfaces/schema/Tables";
 import Table from "../../models/Table";

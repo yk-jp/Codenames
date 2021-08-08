@@ -1,5 +1,5 @@
 // config
-import Term from '../config/term';
+import Term from '../config/Term';
 // abstract class
 import Player from './Player';
 

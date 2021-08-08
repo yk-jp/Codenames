@@ -1,5 +1,5 @@
 // config 
-import Term from '../config/term';
+import Term from '../config/Term';
 // class
 import Team from './Team';
 import Card from './Card';
