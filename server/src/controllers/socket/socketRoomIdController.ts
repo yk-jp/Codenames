@@ -1,5 +1,7 @@
 import { Socket } from 'socket.io';
+// query
 import { roomId_find, roomId_insert } from '../queries/RoomIdsQuery';
+// model
 import RoomIdsInstance from '../../interfaces/schema/RoomIds';
 
 const socketRoomIdController = (io: any, socket: Socket): void => {

@@ -236,9 +236,11 @@ export default class Table {
   /*odd: get player in the red Team 
    even:get player in the blue team.
   */
-  public setTeam(player: Player): void {
+
+  public setTeam(player: Player): Player {
     let team: string = this.blueTeam.getTeamMembers().length > this.redTeam.getTeamMembers().length ? "RED" : "BLUE";
     player.setTeam(team);
+    return player;
   }
 
   public shuffleMembers(): void {
@@ -246,70 +248,43 @@ export default class Table {
     this.redTeam.resetTeamMembers();
     this.blueTeam.resetTeamMembers();
     this.shuffleData(this.players);
-    this.players.map(player => {
-      this.addPlayerToTeam(player);
+    this.players.map((player, index) => {
+      const updatedPlayer:Player = this.addPlayerToTeam(player);
+      this.players[index] = updatedPlayer;
     });
-  }
-
-  /*
-    shuffle card or players
-  */
-  public shuffleData(data: Player[] | Card[]): Player[] | Card[] {
-    /*shuffle cards before setting them to table
-     fisher algorithm
-     Math.random() * (max - min) + min
-   */
-    for (let i = 0; i < data.length; i++) {
-      let rand: number = Math.floor(Math.random() * (data.length - i));
-      let temp = data[i];
-      data[i] = data[rand];
-      data[rand] = temp;
-    }
-    return data;
   }
 
   public deletePlayerFromPlayers(player: IPlayer): Player {
     const playerAt: number = this.playerAt(player);
-    const deletedPlayer: Operative = Object.assign(new Operative("", "", ""), this.players[playerAt]);
+    const deletedPlayer: Operative = this.players[playerAt];
     this.players[playerAt] = this.players[this.players.length - 1];
     this.players.pop();
     return deletedPlayer;
   };
 
-  public playerAt(target: IPlayer): number {
-    let playerAt: number = 0;
-    this.players.map((player, index) => {
-      if (target.id == player.getId()) playerAt = index;
-    });
-    return playerAt;
-  };
+  // ******************** players ****************** //  
 
-  /*
-     Each time users log in, add user to players
-  */
+  /* Each time users log in, add user to players */
   public addPlayer(player: Player): void {
     this.players.push(player);
-  }
-
-  public addPlayerToTeam(player: Player): void {
-    // give a team to players
-    this.setTeam(player);
-    if (player.getTeam() === "RED") this.redTeam.setTeamMembers(player);
-    else this.blueTeam.setTeamMembers(player);
-  }
-
-  public deletePlayerFromTeam(player: IPlayer): Player {
-    if (player.team === "RED") return this.redTeam.deleteTeamMember(player);
-    else return this.blueTeam.deleteTeamMember(player);
   }
 
   public setPlayers(players: Player[]) {
     this.players = players;
   }
 
-  // the number of players has to be more than two.
-  public joinedMoreTwoPlayers(): boolean {
-    return this.players.length == 2;
+
+  public addPlayerToTeam(player: Player): Player {
+    // give a team to players
+    this.setTeam(player);
+    if (player.getTeam() === "RED") this.redTeam.setTeamMembers(player);
+    else this.blueTeam.setTeamMembers(player);
+    return player;
+  }
+
+  public deletePlayerFromTeam(player: IPlayer): Player {
+    if (player.team === "RED") return this.redTeam.deleteTeamMember(player);
+    else return this.blueTeam.deleteTeamMember(player);
   }
 
   public getGamePhase(): string {
@@ -334,11 +309,46 @@ export default class Table {
 
   //to switch gamephase
   public changeGamePhase(team?: string): void {
-    if (team) this.phase = team === "RED" ? Table.PHASE["RED WON"] : Table.PHASE["BLUE WON"];
+    if (team) this.phase = (team === "RED") ? Table.PHASE["RED WON"] : Table.PHASE["BLUE WON"];
     else this.phase = Table.PHASE[this.phase];
   }
 
   public getPlayers(): Player[] {
     return this.players;
+  }
+
+  // ******************** helper ****************** // 
+  public playerAt(target: IPlayer): number {
+    let playerAt: number = 0;
+    this.players.map((player, index) => {
+      if (target.id == player.getId()) playerAt = index;
+    });
+    return playerAt;
+  };
+
+  /*
+    shuffle card or players
+  */
+  public shuffleData(data: Player[] | Card[]): Player[] | Card[] {
+    /*shuffle cards before setting them to table
+     fisher algorithm
+     Math.random() * (max - min) + min
+   */
+    for (let i = 0; i < data.length; i++) {
+      let rand: number = Math.floor(Math.random() * (data.length - i));
+      let temp = data[i];
+      data[i] = data[rand];
+      data[rand] = temp;
+    }
+    return data;
+  }
+
+  // the number of players has to be more than two.
+  public joinedMoreTwoPlayers(): boolean {
+    return this.players.length == 2;
+  }
+
+  public isMaximumNumberOfPlayers(): boolean {
+    return this.players.length >= 10;
   }
 }

@@ -5,20 +5,23 @@ import Operative from "../../models/Operative";
 import ConvertJson from "../../models/convertJson";
 // interface
 import TablesInstance from "../../interfaces/schema/Tables";
+import PlayersInstance from "../../interfaces/schema/Players";
+// queries
 import { table_find, table_insert, table_update } from '../queries/TablesQuery'
 import { player_insert } from "../queries/PlayersQuery";
-import PlayersInstance from "../../interfaces/schema/Players";
+
 const socketInitializeTableAndPlayerController = (io: any, socket: Socket) => {
   //  table controller 
   socket.once("initialize-table-and-player", async (roomId: string, playerName: string, playerId: string) => {
     const tableData: TablesInstance | null = await table_find(roomId);
     let table: Table = new Table();
-    let player: Operative = new Operative(playerName, playerId,"NO TEAM");
+    let player: Operative = new Operative(playerName, playerId, "NO TEAM");
     if (tableData) table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
     table.addPlayer(player);
     table.addPlayerToTeam(player);
-    // store a player data
+
     try {
+      // store a player data
       const result: PlayersInstance | null = await player_insert(playerId, roomId, socket.id, JSON.stringify(player));
 
       if (!result) throw new Error("couldn't store a player");

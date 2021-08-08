@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+// config
+import Message from "../../config/message";
 // model
 import Table from "../../models/Table";
 import ConvertJson from "../../models/convertJson";
@@ -19,8 +21,7 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
       await player_socketId_update(playerId, socket.id);
     } else {
       // send join message 
-      const message: string = `${playerName} joined :)`;
-      io.in(roomId).emit("receive-message", message);
+      io.in(roomId).emit("receive-message", Message.Func.joinMessage(playerName));
     }
   });
 
@@ -46,9 +47,8 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
 
       io.to(socketId).emit("delete-session");
 
-      // send a message to others
-      const message: string = `${player.name} left :(`;
-      io.to(roomId).emit("receive-message", message);
+      // send a leave message to others
+      io.to(roomId).emit("receive-message", Message.Func.leaveMessage(player.name));
 
       // delete player data from db
       await player_delete(playerId);
