@@ -5,7 +5,7 @@ import Operative from "../../models/Operative";
 import TablesInstance from "../../interfaces/schema/Tables";
 import WordsInstance from "../../interfaces/schema/Words";
 import PlayersInstance from "../../interfaces/schema/Players";
-import ConvertJson from "../../models/utils/convertJson";
+import ConvertJson from "../../models/convertJson";
 import Card from "../../models/Card";
 // query
 import { table_find, table_update } from '../queries/TablesQuery'
