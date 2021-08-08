@@ -1,5 +1,5 @@
 // config 
-
+import Term from '../config/term';
 // class
 import Team from './Team';
 import Card from './Card';
@@ -32,19 +32,19 @@ import WordsInstance from '../interfaces/schema/Words';
 
 export default class Table {
   public static PHASE: IGamePhase = {
-    "RED's TURN": "BLUE's TURN",
-    "BLUE's TURN": "RED's TURN",
-    "RED WON": "RED WON",
-    "BLUE WON": "BLUE WON"
+    [Term.TablePhase.REDTURN]: Term.TablePhase.BLUETURN,
+    [Term.TablePhase.BLUETURN]: Term.TablePhase.REDTURN,
+    [Term.TablePhase.REDWON]: Term.TablePhase.REDWON,
+    [Term.TablePhase.BLUEWON]: Term.TablePhase.BLUEWON
   };
 
   public static GAMESTATUS: IGameStatus = {
-    "START": "PLAYING",
-    "PLAYING": "END",
-    "END": "START"
+    [Term.GameStatus.START]: Term.GameStatus.PLAYING,
+    [Term.GameStatus.PLAYING]: Term.GameStatus.END,
+    [Term.GameStatus.END]: Term.GameStatus.START
   }
 
-  public static TEAMS: string[] = ["RED", "BLUE", "BYSTANDER", "ASSASIN"];
+  public static TEAMS: string[] = Term.CardTeam;
 
   private phase: string;
   private players: Player[]; //all team members
@@ -54,10 +54,10 @@ export default class Table {
   public cards: Card[];
   constructor() {
     this.players = []; //no players unless somebody log in to Lobby
-    this.redTeam = new Team("RED");
-    this.blueTeam = new Team("BLUE");
-    this.phase = "RED's TURN";
-    this.status = "START";
+    this.redTeam = new Team(Term.Team.RED);
+    this.blueTeam = new Team(Term.Team.BLUE);
+    this.phase = Term.TablePhase.REDTURN;
+    this.status = Term.GameStatus.START;
     this.cards = Array(25).fill(new Card("NO TEAM", "", false));
   }
 

@@ -15,9 +15,9 @@ export default class Team {
   private name: string; //red or blue
 
   private static PHASE: ITeamPhase = {
-    "GIVING A CLUE": Term.TeamPhase.GUESSING,
-    "GUESSING": Term.TeamPhase.WAITINGFORTURN,
-    "WAITING FOR TURN": Term.TeamPhase.GIVINGACLUE
+    [Term.TeamPhase.GIVINGACLUE]: Term.TeamPhase.GUESSING,
+    [Term.TeamPhase.GUESSING]: Term.TeamPhase.WAITINGFORTURN,
+    [Term.TeamPhase.WAITINGFORTURN]: Term.TeamPhase.GIVINGACLUE
   };
 
   private phase: string;
