@@ -1,6 +1,7 @@
 import { useContext, useRef, useEffect } from "react";
 // config 
 import Storage from "../../config/storage";
+import Message from "../../config/Message";
 // context
 import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
@@ -31,13 +32,13 @@ const ClueController = () => {
     let isValidated: boolean = true;
 
     if (!word.current || word.current.value.split(" ")[0] === "" || !number.current || !number.current.value) {
-      alert("GIVE A CLUE");
+      alert(Message.Error.giveAClue);
       isValidated = false;
     } else if (word.current!.value.split(" ").length > 1) {
-      alert("YOU CAN ENTER ONLY ONE WORD");
+      alert(Message.Error.enterOneWord);
       isValidated = false;
     } else if (isClueSameAsWord()) {
-      alert("YOUR CLUE IS THE SAME AS ONE OF 25 CARDS");
+      alert(Message.Error.sameClueAsWord);
       isValidated = false;
     }
     return isValidated;

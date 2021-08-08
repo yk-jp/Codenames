@@ -6,6 +6,7 @@ const Role = {
   SPYMASTER: SPYMASTER,
   OPERATIVE: OPERATIVE
 }
+
 // team
 const RED: string = "RED";
 const BLUE: string = "BLUE";

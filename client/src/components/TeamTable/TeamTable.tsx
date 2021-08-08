@@ -1,6 +1,8 @@
 import { useContext } from 'react';
+// config
+import Term from '../../config/Term';
+// css
 import TeamTableStyle from './TeamTable.module.css';
-//interfaces
 // controller
 import TeamTableController from './TeamTableController';
 // interface
@@ -11,7 +13,7 @@ import { GameDataContext } from '../../context/GameDataContext';
 const TeamTable = ({ style }): JSX.Element => {
 
   const { tableData } = useContext(GameDataContext);
-  const team: ITeam = style.team === "RED" ? tableData.table.redTeam : tableData.table.blueTeam;
+  const team: ITeam = style.team === Term.Team.RED ? tableData.table.redTeam : tableData.table.blueTeam;
 
   const { kickPlayer } = TeamTableController();
 

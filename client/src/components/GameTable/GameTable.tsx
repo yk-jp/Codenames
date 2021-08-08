@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+// config
+import Term from '../../config/Term';
 //components
 import TeamTable from '../TeamTable/TeamTable';
 import CardList from '../CardList/CardList';
@@ -25,7 +27,7 @@ const GameTable = (): JSX.Element => {
   const { startGameText, startGameDisabled, startGameController } = StartGameController();
   const { isSpymasterActive, isSpymasterDisabled, activateSpymasterController } = SpymasterController();
   const { isShuffleDisabled, shuffleMembersController } = ShuffleController();
-  
+
   GameTableController();
 
   return (
@@ -35,10 +37,10 @@ const GameTable = (): JSX.Element => {
           <div className="d-flex flex-column justify-content-center my-2">
             {/* turn */}
             <div className="container">
-              <h5 className="text-center">{tableData.table.status === "PLAYING" && (playerData.player.team === "RED"
+              <h5 className="text-center">{tableData.table.status === Term.GameStatus.PLAYING && (playerData.player.team === Term.Team.RED
                 ? <span className="text-danger">{JSON.stringify(tableData.table.redTeam.phase).replace(/"/g, "")}</span>
                 : <span className="text-primary">{JSON.stringify(tableData.table.blueTeam.phase).replace(/"/g, "")}</span>)}</h5>
-              <h5 className="text-center">{tableData.table.status === "END" && ((playerData.player.team === "RED" && tableData.table.phase === "BLUE WON") ?
+              <h5 className="text-center">{tableData.table.status === Term.GameStatus.END && ((playerData.player.team === Term.Team.RED && tableData.table.phase === Term.TablePhase.BLUEWON) ?
                 <span className="text-primary">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>
                 : <span className="text-danger">{JSON.stringify(tableData.table.phase).replace(/"/g, "")}</span>)}</h5>
 
@@ -77,9 +79,9 @@ const GameTable = (): JSX.Element => {
               </div>
             </div>
             {/* give a clue button */}
-            {tableData.table.status !== "END" && (playerData.player.role === "SPYMASTER" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE"))) && <Clue />}
+            {tableData.table.status !== Term.GameStatus.END && (playerData.player.role === Term.Role.SPYMASTER && ((playerData.player.team === Term.Team.RED && tableData.table.redTeam.phase === Term.TeamPhase.GIVINGACLUE) || (playerData.player.team === Term.Team.BLUE && tableData.table.blueTeam.phase === Term.TeamPhase.GIVINGACLUE))) && <Clue />}
             {/* end guess button */}
-            {tableData.table.status !== "END" && (playerData.player.role === "OPERATIVE" && ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GUESSING") || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GUESSING"))) && <EndGuess />}
+            {tableData.table.status !== Term.GameStatus.END && (playerData.player.role === Term.Role.OPERATIVE && ((playerData.player.team === Term.Team.RED && tableData.table.redTeam.phase === Term.TeamPhase.GUESSING) || (playerData.player.team === Term.Team.BLUE && tableData.table.blueTeam.phase === Term.TeamPhase.GUESSING))) && <EndGuess />}
           </div>
         </div>
         <div className="col w-100 mt-3 mt-md-5 p-0">
