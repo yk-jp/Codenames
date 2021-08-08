@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 // config
-import Term from "../../config/term";
-import Message from "../../config/message";
+import Term from "../../config/Term";
+import Message from "../../config/Message";
 // model
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";

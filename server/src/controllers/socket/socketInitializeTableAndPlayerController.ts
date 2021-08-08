@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 // message
-import Message from "../../config/message";
+import Message from "../../config/Message";
 // model
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";
