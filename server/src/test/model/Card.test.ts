@@ -1,4 +1,4 @@
-import { words_findAll, word_insert } from "../../controllers/queries/wordsQuery";
+import { words_findAll} from "../../controllers/queries/wordsQuery";
 import WordsInstance from "../../interfaces/schema/Words";
 import Card from "../../models/Card";
 

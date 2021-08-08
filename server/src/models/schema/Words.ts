@@ -5,6 +5,7 @@ import { DataTypes } from "sequelize";
 const Words = db.define<WordsInstance>('Words', {
   word: {
     type: DataTypes.STRING,
+    primaryKey:true,
     allowNull: false,
     unique: true,
     validate: {
