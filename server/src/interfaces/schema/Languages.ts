@@ -1,6 +1,6 @@
 import { Model } from "sequelize";
 
-interface LanguagesAttributes {
+export interface LanguagesAttributes {
   language: string;
 }
 

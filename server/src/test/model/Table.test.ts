@@ -1,6 +1,6 @@
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";
-import ConvertJson from "../../models/utils/convertJson";
+import ConvertJson from "../../models/convertJson";
 import { roomId_delete, roomId_find, roomId_insert } from "../../controllers/queries/RoomIdsQuery";
 import { table_insert, table_find, table_update } from "../../controllers/queries/TablesQuery";
 import { player_insert } from "../../controllers/queries/PlayersQuery";
@@ -8,8 +8,8 @@ import TablesInstance from "../../interfaces/schema/Tables";
 
 describe('add player ', () => {
   let table: Table = new Table();
-  let players = [new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", "")];
-  let players1 = [new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", ""), new Operative("", "", "OPERATIVE", "")];
+  let players = [new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", "")];
+  let players1 = [new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", ""), new Operative("", "", "")];
   test("give a team to each player", () => {
     players.map(player => {
       table.addPlayer(player);
@@ -22,7 +22,6 @@ describe('add player ', () => {
     const tableString = JSON.stringify(table);
     const newTable = ConvertJson.toTable(JSON.parse(tableString));
     // console.log(newTable);
-
 
     players1.map(player => {
       newTable.addPlayer(player);

@@ -1,6 +1,8 @@
-import express, { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import express from "express";
 import http from "http";
+// config
 import config from './config/config';
+import initializeWordList from "./config/initializeWord";
 import cors from 'cors';
 import schedule from 'node-schedule';
 // socket
@@ -17,13 +19,16 @@ import nameFormRoutes from './Routes/nameFormRoutes';
 import { db_synchronization } from "./config/db_synchronization";
 // scheduling jobs
 import { cronJobs } from "./controllers/cronJobs/cronJobs";
-import { restart } from "nodemon";
+
 const app = express();
 const port = config.server.port || "3001";
 const host = config.server.host || "localhost";
 
 //Synchronizing database 
 db_synchronization();
+
+// initialize wordlist in db
+// initializeWordList();
 
 /* Scheduling jobs 
    clean up database table every 4 hours
