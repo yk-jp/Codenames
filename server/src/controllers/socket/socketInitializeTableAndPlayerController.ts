@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+// message
+import Message from "../../config/message";
 // model
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";
@@ -43,7 +45,7 @@ const socketInitializeTableAndPlayerController = (io: any, socket: Socket) => {
 
     io.in(roomId).emit("receive-table", JSON.stringify(table));
     socket.emit("receive-player", JSON.stringify(player));
-    socket.emit("initialize-table-and-player", "initialized");
+    socket.emit("initialize-table-and-player", Message.Alert.initialized);
   })
 };
 

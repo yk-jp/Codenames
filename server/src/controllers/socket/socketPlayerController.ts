@@ -1,10 +1,12 @@
 import { Socket } from "socket.io";
-// message
+// config
+import Term from "../../config/term";
 import Message from "../../config/message";
 // model
 import Operative from "../../models/Operative";
 import Spymaster from "../../models/Spymaster";
 import Table from "../../models/Table";
+import Team from "../../models/Team";
 import ConvertJson from "../../models/convertJson";
 import PlayersInstance from "../../interfaces/schema/Players";
 import TablesInstance from "../../interfaces/schema/Tables";
@@ -38,14 +40,12 @@ const socketPlayerController = (io: any, socket: Socket): void => {
       const spymaster: Spymaster = new Spymaster(player.getName(), player.getId(), player.getTeam());
 
       // other players become operative and they are in operatives list
-      if (player.getTeam() === "RED") table.redTeam.dividePlayers(spymaster);
-      else table.blueTeam.dividePlayers(spymaster);
+      const team:Team = (player.getTeam() === Term.Team.RED) ? table.redTeam : table.blueTeam;
+      team.dividePlayers(spymaster);
 
       io.in(roomId).emit("activate-spymaster", spymaster.getTeam());
       socket.emit("receive-player", JSON.stringify(spymaster));
-
       io.in(roomId).emit("receive-table", JSON.stringify(table));
-
       // send a message 
       io.in(roomId).emit("receive-message", Message.Func.becomeSpymaster(spymaster.getName()));
 
