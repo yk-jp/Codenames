@@ -2,6 +2,7 @@ import { ChangeEvent, useContext, useRef, useState, useEffect } from 'react';
 // config
 import Storage from '../../config/storage';
 import cardLanguage from '../../config/cardLanguage';
+import Term from '../../config/Term';
 // context
 import { GameDataContext } from '../../context/GameDataContext';
 
@@ -16,7 +17,7 @@ const CardLanguageRadioController = () => {
   };
 
   const cardLanguageStyleContoller = () => {
-    if (tableData.table.status !== "START") setIsCardLanguageDisabled(true);
+    if (tableData.table.status !== Term.GameStatus.START) setIsCardLanguageDisabled(true);
     else setIsCardLanguageDisabled(false);
   };
 

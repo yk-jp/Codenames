@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 // config 
 import Storage from '../../config/storage';
+import Term from '../../config/Term';
 // context
 import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
@@ -15,8 +16,8 @@ const SpymasterController = () => {
   const [isSpymasterActive, setIsSpymasterActive] = useState<boolean>(false);
 
   const disableSpymasterBtnController = () => {
-    if (tableData.table.status !== "PLAYING") return;
-    if ((playerData.player.team === "RED" && tableData.table.redTeam.phase === "GIVING A CLUE" && !tableData.table.redTeam.spymaster) || (playerData.player.team === "BLUE" && tableData.table.blueTeam.phase === "GIVING A CLUE" && !tableData.table.blueTeam.spymaster)) {
+    if (tableData.table.status !== Term.GameStatus.PLAYING) return;
+    if ((playerData.player.team === Term.Team.RED && tableData.table.redTeam.phase === Term.TeamPhase.GIVINGACLUE && !tableData.table.redTeam.spymaster) || (playerData.player.team === Term.Team.BLUE && tableData.table.blueTeam.phase === Term.TeamPhase.GIVINGACLUE && !tableData.table.blueTeam.spymaster)) {
       setIsSpymasterDisabled(false);
     }
     else setIsSpymasterDisabled(true);
@@ -51,8 +52,8 @@ const SpymasterController = () => {
       if (playerData.player.team === team) {
         // enable players to hit the button
         setIsSpymasterDisabled(false);
-        return alert(message);
-      }
+        alert(message);
+      } else setIsSpymasterDisabled(true);
     });
 
     return () => {
@@ -62,7 +63,7 @@ const SpymasterController = () => {
     };
   }, [socket]);
 
-  return {isSpymasterDisabled,isSpymasterActive,activateSpymasterController};
+  return { isSpymasterDisabled, isSpymasterActive, activateSpymasterController };
 };
 
 

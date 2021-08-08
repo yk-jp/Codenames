@@ -1,5 +1,8 @@
 import { useEffect, useState, useContext } from 'react';
+// config
 import Storage from '../../config/storage';
+import Message from '../../config/Message';
+import Term from '../../config/Term';
 // context
 import { SocketContext } from '../../context/SocketContext';
 import { GameDataContext } from '../../context/GameDataContext';
@@ -13,12 +16,12 @@ const ShuffleController = () => {
   const [isShuffleDisabled, setIsShuffleDisabled] = useState<boolean>(false);
 
   const shuffleStyleContoller = () => {
-    if (tableData.table.status === "PLAYING") setIsShuffleDisabled(true);
+    if (tableData.table.status === Term.GameStatus.PLAYING) setIsShuffleDisabled(true);
     else setIsShuffleDisabled(false);
   };
 
   const shuffleMembersController = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (window.confirm("SHUFFLE MEMBERS ?")) socket.emit("shuffle-members", roomId);
+    if (window.confirm(Message.Confirm.shuffleMembers)) socket.emit("shuffle-members", roomId);
     else e.preventDefault();
   }
 
