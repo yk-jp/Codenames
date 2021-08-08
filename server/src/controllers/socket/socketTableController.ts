@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+// message
+import Message from "../../config/message";
 // model
 import Table from "../../models/Table";
 import Operative from "../../models/Operative";
@@ -11,7 +13,6 @@ import Card from "../../models/Card";
 import { table_find, table_update } from '../queries/TablesQuery'
 import { words_findAll } from "../queries/wordsQuery";
 import { player_find, player_update } from "../queries/PlayersQuery";
-
 // interface
 import IClue from "../../interfaces/IClue";
 
@@ -44,10 +45,9 @@ const socketTableController = (io: any, socket: Socket) => {
       await table_update(roomId, JSON.stringify(table));
 
       io.in(roomId).emit("receive-table", JSON.stringify(table));
-      socket.to(roomId).emit("alert-message", `${clue.word} ${clue.number}`);
-      // send a message
-      const message: string = `${playerName} gave clue "${clue.word} ${clue.number}" `;
-      io.in(roomId).emit("receive-message", message);
+      socket.to(roomId).emit("alert-message", Message.Func.alertClueMessage(clue));
+      // send a clue message
+      io.in(roomId).emit("receive-message", Message.Func.clueMessage(playerName, clue));
     } catch (err) {
       console.log(err);
     }
@@ -108,7 +108,7 @@ const socketTableController = (io: any, socket: Socket) => {
       io.in(roomId).emit("receive-message", message);
 
       if (table.getGameStatus() === "END") {
-        message =`${table.getGamePhase()} =D>`;
+        message = `${table.getGamePhase()} =D>`;
         io.in(roomId).emit("receive-message", message);
       }
 
@@ -122,15 +122,28 @@ const socketTableController = (io: any, socket: Socket) => {
   socket.on("shuffle-members", async (roomId: string) => {
     try {
       const tableData: TablesInstance | null = await table_find(roomId);
-
       if (!tableData) throw new Error("table was not found");
-
       const table: Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
+      
       table.shuffleMembers();
+      // update playerData in db
+      table.getPlayers().map(async (player) => {
+        const playerId: string = player.getId();
+        await player_update(JSON.stringify(player), playerId);
+
+        const playerData: PlayersInstance | null = await player_find(playerId);
+        if (playerData) {
+          const socketId: string = playerData.get("socketId");
+          io.to(socketId).emit("receive-player", JSON.stringify(player));
+        }
+      });
+
       io.in(roomId).emit("receive-table", JSON.stringify(table));
       io.in(roomId).emit("activate-spymaster");
+
       // update table
       await table_update(roomId, JSON.stringify(table));
+
     } catch (err) {
       console.log(err);
     }
@@ -163,7 +176,6 @@ const socketTableController = (io: any, socket: Socket) => {
 
       const alert: string = "SELECT A SPYMASTER";
       io.in(roomId).emit("alert-for-spymaster", alert, "RED");
-
 
     } catch (err) {
       console.log(err);

@@ -6,6 +6,4 @@ const socketDisconnectionController = (io: any, socket: Socket) => {
   });
 }
 
-
-
 export default socketDisconnectionController;

@@ -1,4 +1,6 @@
 import { Socket } from "socket.io";
+// message
+import Message from "../../config/message";
 // model
 import Operative from "../../models/Operative";
 import Spymaster from "../../models/Spymaster";
@@ -45,8 +47,7 @@ const socketPlayerController = (io: any, socket: Socket): void => {
       io.in(roomId).emit("receive-table", JSON.stringify(table));
 
       // send a message 
-      const message: string = `${spymaster.getName()} became a spymaster`;
-      io.in(roomId).emit("receive-message", message);
+      io.in(roomId).emit("receive-message", Message.Func.becomeSpymaster(spymaster.getName()));
 
       // update table
       await table_update(roomId, JSON.stringify(table));
