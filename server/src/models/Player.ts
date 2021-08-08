@@ -1,19 +1,13 @@
 export default abstract class Player {
   protected name: string;
   protected id: string; //playerId
-  protected role: string; // operative or spymaster. to detect the role in frontend
+  protected role: string;
   protected team: string;
-  constructor(name: string, id: string, role: string, team: string) {
+  constructor(name: string, id: string, team: string) {
     this.name = name;
     this.id = id;
-    this.role = role;
     this.team = team;
-  }
-
-  public getPlayerInfo() {
-    return {
-      name: this.getName(), id: this.getId(), role: this.getRole(), team: this.getTeam()
-    };
+    this.role = "";
   }
 
   public getName(): string {
@@ -30,10 +24,6 @@ export default abstract class Player {
 
   public getRole(): string {
     return this.role;
-  }
-
-  public setRole(role: string): void {
-    this.role = role;
   }
 
   public getTeam(): string {

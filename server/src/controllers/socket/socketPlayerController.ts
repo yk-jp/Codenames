@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import Operative from "../../models/Operative";
 import Spymaster from "../../models/Spymaster";
 import Table from "../../models/Table";
-import ConvertJson from "../../models/utils/convertJson";
+import ConvertJson from "../../models/convertJson";
 import PlayersInstance from "../../interfaces/schema/Players";
 import TablesInstance from "../../interfaces/schema/Tables";
 // query
@@ -31,9 +31,9 @@ const socketPlayerController = (io: any, socket: Socket): void => {
       if (!playerData) throw new Error("player was not found");
       const table: Table = ConvertJson.toTable(JSON.parse(tableData.get("table")));
       // create instance of spymaster
-      const player: Operative = ConvertJson.toPlayer(JSON.parse(playerData.get("player")));
+      const player: Operative = ConvertJson.toPlayer(JSON.parse(playerData.get("player"))) as Operative;
       // set spymaster
-      const spymaster: Spymaster = new Spymaster(player.getName(), player.getId(), "SPYMASTER", player.getTeam());
+      const spymaster: Spymaster = new Spymaster(player.getName(), player.getId(), player.getTeam());
 
       // other players become operative and they are in operatives list
       if (player.getTeam() === "RED") table.redTeam.dividePlayers(spymaster);

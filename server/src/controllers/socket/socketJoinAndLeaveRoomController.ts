@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 // model
 import Table from "../../models/Table";
-import ConvertJson from "../../models/utils/convertJson";
+import ConvertJson from "../../models/convertJson";
 // interface
 import IPlayer from "../../interfaces/IPlayer";
 import PlayersInstance from "../../interfaces/schema/Players";

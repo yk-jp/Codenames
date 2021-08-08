@@ -1,3 +1,5 @@
+// config 
+
 // class
 import Team from './Team';
 import Card from './Card';
@@ -46,9 +48,9 @@ export default class Table {
 
   private phase: string;
   private players: Player[]; //all team members
+  private status: string;
   public redTeam: Team;
   public blueTeam: Team;
-  private status: string;
   public cards: Card[];
   constructor() {
     this.players = []; //no players unless somebody log in to Lobby
@@ -163,7 +165,7 @@ export default class Table {
     if (this.redTeam.getSpymaster()) spymasters.push(this.redTeam.getSpymaster()!);
     if (this.blueTeam.getSpymaster()) spymasters.push(this.blueTeam.getSpymaster()!);
     return spymasters.map(spymaster => {
-      return new Operative(spymaster.getName(), spymaster.getId(), "OPERATIVE", spymaster.getTeam());
+      return new Operative(spymaster.getName(), spymaster.getId(), spymaster.getTeam());
     });
     ;
   }
@@ -268,7 +270,7 @@ export default class Table {
 
   public deletePlayerFromPlayers(player: IPlayer): Player {
     const playerAt: number = this.playerAt(player);
-    const deletedPlayer: Operative = Object.assign(new Operative("", "", "", ""), this.players[playerAt]);
+    const deletedPlayer: Operative = Object.assign(new Operative("", "", ""), this.players[playerAt]);
     this.players[playerAt] = this.players[this.players.length - 1];
     this.players.pop();
     return deletedPlayer;

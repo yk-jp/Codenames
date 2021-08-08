@@ -1,16 +1,16 @@
 //model
-import Team from "../Team";
-import Player from "../Player";
-import Operative from "../Operative";
-import Spymaster from "../Spymaster";
-import Card from "../Card";
+import Team from "./Team";
+import Player from "./Player";
+import Operative from "./Operative";
+import Spymaster from "./Spymaster";
+import Card from "./Card";
 // interface
-import ITable from "../../interfaces/ITable";
-import ITeam from "../../interfaces/ITeam";
-import ISpymaster from "../../interfaces/ISpymaster";
-import IOperative from "../../interfaces/IOperative";
-import ICard from "../../interfaces/ICard";
-import Table from "../Table";
+import ITable from "../interfaces/ITable";
+import ITeam from "../interfaces/ITeam";
+import ISpymaster from "../interfaces/ISpymaster";
+import IOperative from "../interfaces/IOperative";
+import ICard from "../interfaces/ICard";
+import Table from "./Table";
 
 export default class ConvertJson {
 
@@ -53,14 +53,13 @@ export default class ConvertJson {
   // operative
   public static toOperative(operative: IOperative | null): Operative | null {
     if (!operative) return null;
-    return new Operative(operative.name, operative.id, operative.role, operative.team);
+    return new Operative(operative.name, operative.id, operative.team);
   }
 
   // spymaster
   public static toSpymaster(spymaster: ISpymaster | null): Spymaster | null {
     if (!spymaster) return null;
-    let convertedData = new Spymaster(spymaster.name, spymaster.id, spymaster.role, spymaster.team);
-    convertedData.setClue(spymaster.clue);
+    let convertedData = new Spymaster(spymaster.name, spymaster.id, spymaster.team);
     return convertedData;
   }
 

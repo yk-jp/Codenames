@@ -5,7 +5,7 @@ import Table from "../../models/Table";
 // query
 import { table_find } from "../queries/TablesQuery";
 // model
-import ConvertJson from "../../models/utils/convertJson";
+import ConvertJson from "../../models/convertJson";
 
 const startSession = async (req: Request, res: Response) => {
   const roomId: string = req.body.roomId;
