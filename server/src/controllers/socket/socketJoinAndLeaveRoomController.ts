@@ -17,12 +17,8 @@ const socketJoinRoomController = (io: any, socket: Socket): void => {
   socket.once("join-room", async (roomId: string, playerId: string, playerName: string) => {
     socket.join(roomId);
     const playerData: PlayersInstance | null = await player_find(playerId);
-    if (playerData) {
-      await player_socketId_update(playerId, socket.id);
-    } else {
-      // send join message 
-      io.in(roomId).emit("receive-message", Message.Func.joinMessage(playerName));
-    }
+    if (playerData) await player_socketId_update(playerId, socket.id);
+    else io.in(roomId).emit("receive-message", Message.Func.joinMessage(playerName));// send join message 
   });
 
   socket.once("leave-room", async (roomId: string, playerId: string) => {

@@ -19,11 +19,13 @@ const Team = {
 const GIVINGACLUE: string = "GIVING A CLUE";
 const GUESSING: string = "GUESSING";
 const WAITINGFORTURN: string = "WAITING FOR TURN";
+const ENDGUESSING: string = "END GUESSING";
 
 const TeamPhase = {
   GIVINGACLUE: GIVINGACLUE,
   GUESSING: GUESSING,
-  WAITINGFORTURN: WAITINGFORTURN
+  WAITINGFORTURN: WAITINGFORTURN,
+  ENDGUESSING: ENDGUESSING
 }
 
 // table phase
@@ -55,7 +57,14 @@ const GameStatus = {
 const BYSTANDER: string = "BYSTANDER";
 const ASSASIN: string = "ASSASIN";
 
-const CardTeam:string[] = [RED, BLUE, BYSTANDER, ASSASIN];
+const CardTeamList: string[] = [RED, BLUE, BYSTANDER, ASSASIN];
+
+const CardTeam = {
+  RED: RED,
+  BLUE: BLUE,
+  BYSTANDER: BYSTANDER,
+  ASSASIN: ASSASIN
+}
 
 const Term = {
   Role: Role,
@@ -63,7 +72,9 @@ const Term = {
   TeamPhase: TeamPhase,
   TablePhase: TablePhase,
   GameStatus: GameStatus,
+  CardTeamList: CardTeamList,
   CardTeam:CardTeam
+  
 };
 
 export default Term;
