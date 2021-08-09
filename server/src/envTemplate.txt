@@ -1,0 +1,9 @@
+# server
+SERVER_PORT = 
+SERVER_HOST=
+
+# db
+DB_USER = 
+DB_NAME = 
+DB_PASSWORD = 
+DB_HOST = 
