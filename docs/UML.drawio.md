@@ -1,1 +1,1 @@
-![UML diagram](./UML.drawio.svg)
+![UML diagram](./UML.drawio.png)
