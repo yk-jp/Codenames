@@ -1,1 +1,0 @@
-![UML diagram](./UML.drawio.png)
