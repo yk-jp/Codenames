@@ -9,9 +9,7 @@
     "build": "tsc -p . -w",
     "dev": "nodemon ./src/index.ts",
     "client": "cd ../client && npm start",
-    "client-install":"cd ../client && npm install",
-    "backend-install": "npm install",
-    "install":"concurrently \"npm run client-install\" \"npm run backend-install\""
+    "client-install": "cd ../client && npm install"
   },
   "repository": {
     "type": "git",
