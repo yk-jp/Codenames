@@ -21,8 +21,6 @@ import { db_synchronization } from "./config/db_synchronization";
 import { cronJobs } from "./controllers/cronJobs/cronJobs";
 
 const app = express();
-const port = config.server.port || "3001";
-const host = config.server.host || "localhost";
 
 //Synchronizing database 
 db_synchronization();
@@ -37,7 +35,7 @@ schedule.scheduleJob('0 */4 * * *', cronJobs);
 
 // It's for the express router
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: config.client.name,
   methods: ["GET", "POST"],
   credentials: true
 }));
@@ -52,7 +50,7 @@ app.use('/form', nameFormRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000"],
+    origin: [config.client.name],
     credentials: true
   }
 });
@@ -76,6 +74,6 @@ gameIO.on("connection", (socket: Socket) => {
   socketDisconnectionController(gameIO, socket);
 });
 
-server.listen(port, () => {
-  console.log(`Server listening at http://${host}:${port}`);
+server.listen(config.server.port, () => {
+  console.log(`Server listening at ${config.server.port}`);
 });

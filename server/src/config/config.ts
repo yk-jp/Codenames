@@ -1,8 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+// client 
+const client_name = process.env.CLIENT_NAME || "http://localhost:3000";
+
+const CLIENT = { 
+  name:client_name
+}
+
 //server
-const server_port: number = parseInt(process.env.SERVER_PORT!) || 3001;
+const server_port:string = process.env.PORT || "3001";
 const server_host: string = process.env.SERVER_HOST || "localhost";
 
 const SERVER = {
@@ -24,6 +31,7 @@ const DB = {
 }
 
 const config = {
+  client:CLIENT,
   server: SERVER,
   db: DB,
 }

@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "start": "concurrently \"npm run build\" \"npm run dev\"  \"npm run client\"",
-    "build": "tsc -p . -w",
+    "concurrent-start": "concurrently \"npm run build-dev\" \"npm run dev\"  \"npm run client\"",
+    "build-dev": "tsc -p . -w",
     "dev": "nodemon ./src/index.ts",
     "client": "cd ../client && npm start",
-    "client-install": "cd ../client && npm install"
+    "client-install": "cd ../client && npm install",
+    "start": "node build/index.js",
+    "build": "tsc",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
