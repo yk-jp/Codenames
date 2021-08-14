@@ -12,5 +12,6 @@ export const cronJobs = async () => {
   } finally {
     console.log("scheduling jobs are done!");
   }
-
 };
+ 
+cronJobs();
