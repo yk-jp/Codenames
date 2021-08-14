@@ -7,7 +7,8 @@ export const SocketContext = createContext<Socket | any>(null);
 export const SocketProvider = ({ children }): JSX.Element => {
   const socket: Socket = io(config.server.game, {
     autoConnect: false,
-    withCredentials: true
+    withCredentials: true,
+    "rejectUnauthorized" : false
   });
 
   return (
