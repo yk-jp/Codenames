@@ -5,7 +5,7 @@ const InviteUrl = (): JSX.Element => {
 
   return (
     <>
-      <button onClick={() => copyInputData("link")} className={`btn ${InviteUrlStyle["btn-sm"]} btn-outline-success h-20px`}>COPY</button><input id="link" className="h-20px" type="url" value={url} readOnly />
+      <button onClick={() => copyInputData("link")} className={`btn ${InviteUrlStyle["btn-sm"]} btn-outline-success h-20px`}>COPY</button><input id="link" className={`h-20px ${InviteUrlStyle["input-fontSize"]}`} type="url" value={url} readOnly />
     </>
   );
 };

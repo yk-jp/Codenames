@@ -69,7 +69,7 @@ const GameTable = (): JSX.Element => {
                   <label className="form-check-label mx-2" htmlFor="activate-spymaster">SPYMASTER</label>
                 </div>
                 {/* shuffle members */}
-                <div id="shuffle">
+                <div id="shuffle" className={`${GameTableStyle["min-w-70"]}`}>
                   <button type="button" className={`btn btn-outline-success ${GameTableStyle["btn-sm"]} h-20px mx-2 resize`} onClick={(e) => shuffleMembersController(e)} disabled={isShuffleDisabled}>SHUFFLE MEMBERS</button>
                 </div>
                 {/* start game */}

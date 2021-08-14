@@ -3,3 +3,8 @@
   font-size: 0.5rem;
   border-radius: 0.1rem;
 }
+
+.input-fontSize { 
+  font-size:0.8em;
+  padding:0;
+}

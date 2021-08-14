@@ -1,5 +1,11 @@
 .btn-sm {
   padding: 0 0.5rem !important;
-  font-size: 0.5rem;
+  font-size: 40%;
   border-radius: 0.1rem;
 }
+
+@media (min-width: 768px) { 
+  .btn-sm {
+    font-size: 50%;
+  }
+} 
