@@ -4,7 +4,7 @@ This is a web app to play Codenames for 4-10 players. In this app, you can choos
 A hosted web app is available at [https://www.codenames.ml](https://www.codenames.ml/) 
 
 # Sample image
-<img src="./docs/sample_img//img2.png" alt="drawing" width="200"/> <img src="./docs/sample_img//img1.png" alt="drawing" width="200"/>
+<img src="./docs/sample_img//operative_img.png" alt="drawing" width="200"/> <img src="./docs/sample_img//spymaster_img.png" alt="drawing" width="200"/>
 
 # Why I built this app? 
 I wanted to improve my development skills, especially backend skills. I've never built apps that can be published like this and wanted to use the knowledge of CS. (I finally did it!) 
