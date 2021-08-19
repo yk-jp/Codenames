@@ -46,7 +46,7 @@ DB_HOST =  //hostname
 
 Run following commands 
 ```
-npm run install 
+npm install 
 npm run client-install 
 ```
 
