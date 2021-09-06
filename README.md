@@ -86,3 +86,4 @@ backend
 *  Socket.io
 *  Sequelize(ORM)
 *  MySQL
+*  Jest
