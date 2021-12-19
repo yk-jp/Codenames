@@ -10,7 +10,11 @@ A hosted web app is available at [https://www.codenames.ml](https://www.codename
 I wanted to improve my development skills, especially backend skills. I've never built apps that can be published like this and wanted to use the knowledge of CS. (I finally did it!) 
 
 # Architecture
-You can see the architecture,UML and ERD in [here](https://github.com/yk-jp/Codenames/tree/master/docs/architecture).  
+## ERD
+<img src="./docs/architecture/ERD.drawio.png" alt="drawing" width="200"/> 
+
+## UML
+<img src="./docs/architecture/UML.drawio.png" alt="drawing" width="200"/>
 
 # Getting started
 
