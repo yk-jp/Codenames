@@ -1,0 +1,54 @@
+/* height */
+.h100 { 
+  height:100%;
+}
+
+/* width */
+.w100 { 
+  width:100%;
+}
+
+.w50 { 
+  width: 50%;
+}
+
+/* button */
+.outlinedBtnPurple { 
+  color:#673ab7;
+  border-color:#673ab7;
+}
+
+/* flex */
+.flex { 
+  display: flex;
+}
+
+.justifyCenter { 
+  justify-content: center;
+}
+
+.alignItemsCenter {
+  align-items: center;
+}
+
+.flexWrap { 
+  flex-wrap: wrap;
+}
+
+.flexCol { 
+  flex-direction: column;
+}
+
+/* margin */
+
+.mx05 { 
+  margin: 0 0.5em
+}
+
+.my2 { 
+  margin: 2em 0
+}
+
+.my5 { 
+  margin: 5em 0
+}
