@@ -12,6 +12,10 @@
   width: 50%;
 }
 
+.vw80 { 
+  width:80vw;
+}
+
 /* button */
 .outlinedBtnPurple { 
   color:#673ab7;
@@ -41,14 +45,18 @@
 
 /* margin */
 
+.mAuto { 
+  margin:auto;
+}
+
 .mx05 { 
-  margin: 0 0.5em
+  margin: 0 0.5em;
 }
 
 .my2 { 
-  margin: 2em 0
+  margin: 2em 0;
 }
 
 .my5 { 
-  margin: 5em 0
+  margin: 5em 0;
 }
