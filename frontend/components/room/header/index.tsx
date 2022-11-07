@@ -18,6 +18,29 @@ const Header = () => {
                         <Button
                             variant="outlined"
                             style={{ minWidth: '1.5em' }}
+                            size="small"
+                            className={`${gstyle.outlinedBtnPurple} ${style.btn}`}
+                            disabled
+                        >
+                            Game Start
+                        </Button>
+                    </div>
+                    <div className={gstyle.pl05}>
+                        <Button
+                            variant="outlined"
+                            style={{ minWidth: '1.5em' }}
+                            size="small"
+                            className={`${gstyle.outlinedBtnPurple} ${style.btn}`}
+                            disabled
+                        >
+                            Shuffle Member  
+                        </Button>
+                    </div>
+                    <div className={gstyle.pl05}>
+                        <Button
+                            variant="outlined"
+                            style={{ minWidth: '1.5em' }}
+                            size="small"
                             className={`${gstyle.outlinedBtnPurple} ${style.btn}`}
                             disabled
                         >
@@ -28,6 +51,7 @@ const Header = () => {
                         <Button
                             variant="outlined"
                             style={{ minWidth: '1.5em' }}
+                            size="small"
                             className={`${gstyle.outlinedBtnPurple} ${style.btn}`}
                             disabled
                         >
@@ -38,6 +62,7 @@ const Header = () => {
                         <Button
                             variant="outlined"
                             style={{ minWidth: '1.5em' }}
+                            size="small"
                             className={`${gstyle.outlinedBtnPurple} ${style.btn}`}
                             disabled
                         >
