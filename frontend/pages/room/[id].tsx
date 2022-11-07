@@ -5,7 +5,7 @@ import Main from '../../components/room/main'
 
 const Room: NextPage = () => {
     return (
-        <div className={`${gstyle.my5}`}>
+        <div className={`${gstyle.my2}`}>
             <Header />
             <Main />
         </div>
