@@ -31,8 +31,16 @@
   justify-content: center;
 }
 
+.justifyEnd { 
+  justify-content: flex-end;
+}
+
 .alignItemsCenter {
   align-items: center;
+}
+
+.alignItemsBase {
+  align-items: flex-end;
 }
 
 .flexWrap { 
@@ -41,6 +49,10 @@
 
 .flexCol { 
   flex-direction: column;
+}
+
+.spaceBetween { 
+  justify-content: space-between;
 }
 
 /* margin */
@@ -59,4 +71,10 @@
 
 .my5 { 
   margin: 5em 0;
+}
+
+/* padding */
+
+.pl05 { 
+  padding: 0 0 0 0.5em;
 }
