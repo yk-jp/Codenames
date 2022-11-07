@@ -1,6 +1,7 @@
 import gstyle from '../../../utils/globalstyle.module.css'
 import style from './style.module.css'
 
+import PlayOptions from '../playOptions'
 // import CardComp from '../../card'
 
 const CardComp = () => {
@@ -24,7 +25,7 @@ const Main = () => {
                     <h3
                         className={`${gstyle.textCenter} ${gstyle.m0} ${gstyle.my1} ${style.fontText}`}
                     >
-                        Blue's turn
+                        Blues turn
                     </h3>
                 </div>
                 <div>
@@ -112,6 +113,9 @@ const Main = () => {
                 </div>
                 <div>
                     <CardComp />
+                </div>
+                <div className={style.playOptions}>
+                    <PlayOptions />
                 </div>
             </div>
         </div>

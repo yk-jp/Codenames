@@ -25,6 +25,10 @@
   font-size: clamp(13px, 1vw, 1.5em);
 }
 
+.playOptions { 
+  grid-column: 1 / -1;
+}
+
 .statusContainer { 
   display:grid;
   grid-template-columns: repeat(3, calc(150px * 5 / 3));

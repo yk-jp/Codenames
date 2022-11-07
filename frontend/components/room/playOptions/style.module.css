@@ -1,0 +1,4 @@
+.btn {
+  font-size: clamp(5px, 1vw, 1em);
+  white-space: nowrap;
+}
