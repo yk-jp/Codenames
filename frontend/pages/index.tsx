@@ -1,20 +1,22 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
+import Header from '../components/hero/header'
+import Main from '../components/hero/main'
 
 const Home: NextPage = () => {
-  return (
-    <div>
-      <Head>
-        <title>Codenames</title>
-      </Head>
-      <main >
-        main
-      </main>
-      <footer>
-      </footer>
-    </div>
-  )
+    return (
+        <div>
+            <Head>
+                <title>Codenames</title>
+            </Head>
+            <header>
+                <Header />
+            </header>
+            <main>
+                <Main />
+            </main>
+        </div>
+    )
 }
 
 export default Home

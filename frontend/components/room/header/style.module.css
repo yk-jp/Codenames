@@ -1,0 +1,36 @@
+.wAuto {
+    width: calc(162px * 5);
+}
+
+.btn {
+    font-size: clamp(5px, 1vw, 1em);
+    white-space: nowrap;
+}
+
+.link {
+    font-size: clamp(5px, 1vw, 1em);
+}
+
+hr.divider {
+    border: 0.5px solid gray;
+    width: calc(162px * 5);
+}
+
+@media only screen and (max-width: 769px) {
+    .wAuto {
+        width: calc(106px * 5);
+    }
+
+    hr.divider {
+        width: calc(106px * 5);
+    }
+}
+
+@media only screen and (max-width: 481px) {
+    .wAuto {
+        width: calc(70px * 5);
+    }
+    hr.divider {
+        width: calc(73px * 5);
+    }
+}

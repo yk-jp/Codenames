@@ -1,0 +1,25 @@
+.dAlign {
+  flex-direction: row;
+}
+
+.descWidth { 
+  width: 40%;
+}
+
+@media only screen and (max-width: 600px) {
+  .smW100 { 
+    width: 100%;
+  }
+
+  .descWidth { 
+    width: 60%;
+  }
+
+  .dAlign {
+    flex-direction: column;
+  }
+
+  .sm1 { 
+    margin: 1em 0;
+  }
+}

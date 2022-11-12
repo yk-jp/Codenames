@@ -1,0 +1,101 @@
+/* height */
+.h100 {
+    height: 100%;
+}
+
+/* width */
+.w100 {
+    width: 100%;
+}
+
+.w50 {
+    width: 50%;
+}
+
+.vw80 {
+    width: 80vw;
+}
+
+/* button */
+.outlinedBtnPurple {
+    color: #673ab7;
+    border-color: #673ab7;
+}
+
+/* text */
+
+.textCenter {
+    text-align: center;
+}
+.textEnd {
+    text-align: end;
+}
+
+/* flex */
+.flex {
+    display: flex;
+}
+
+.justifyCenter {
+    justify-content: center;
+}
+
+.justifyEnd {
+    justify-content: flex-end;
+}
+
+.alignItemsCenter {
+    align-items: center;
+}
+
+.alignItemsBase {
+    align-items: flex-end;
+}
+
+.flexWrap {
+    flex-wrap: wrap;
+}
+
+.flexCol {
+    flex-direction: column;
+}
+
+.spaceBetween {
+    justify-content: space-between;
+}
+
+/* margin */
+
+.m0 {
+    margin: 0;
+}
+
+.mAuto {
+    margin: auto;
+}
+
+.mx05 {
+    margin: 0 0.5em;
+}
+
+.my1 {
+  margin: 1em 0;
+}
+
+.my2 {
+    margin: 2em 0;
+}
+
+.my5 {
+    margin: 5em 0;
+}
+
+/* padding */
+
+.p0 {
+    padding: 0;
+}
+
+.pl05 {
+    padding: 0 0 0 0.5em;
+}
