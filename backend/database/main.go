@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/yk-jp/Codenames/config"
+	"github.com/yk-jp/Codenames/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -26,6 +27,8 @@ func ConnectDb(config config.Config) {
 	log.Println("Conecction was successful")
 	db.Logger = logger.Default.LogMode(logger.Info)
 	log.Println("Running migrations")
+
+	db.AutoMigrate(&models.Card{}, &models.Word{}, &models.Language{}, &models.Player{}, &models.PlayerRole{}, &models.Table{}, &models.Color{})
 
 	Db = DBInstance{Db: db}
 }
