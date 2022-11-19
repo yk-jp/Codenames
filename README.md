@@ -1,7 +1,7 @@
 # Codenames
 This is a web app to play Codenames for 4-10 players. In this app, you can choose languages for words, japanese or english.  
 
-A hosted web app is available at [https://web-codenames-app.netlify.app/](https://web-codenames-app.netlify.app/) 
+A hosted web app is available at <s>https://web-codenames-app.netlify.app/</s>
 
 # Sample image
 <img src="./docs/sample_img//operative_img.png" alt="drawing" width="200"/> <img src="./docs/sample_img//spymaster_img.png" alt="drawing" width="200"/>
